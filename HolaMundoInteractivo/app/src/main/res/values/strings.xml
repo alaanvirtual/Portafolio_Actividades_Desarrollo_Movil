@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">HolaMundoInteractivo</string>
+    <string name="hint_nombre">Name</string>
+    <string name="hint_boton">saludar</string>
+    <string name="hint_salida">TextView</string>
+    <string name="Saludar">Saludar</string>
+    <string name="name">Ingresa tu nombre</string>
+</resources>
