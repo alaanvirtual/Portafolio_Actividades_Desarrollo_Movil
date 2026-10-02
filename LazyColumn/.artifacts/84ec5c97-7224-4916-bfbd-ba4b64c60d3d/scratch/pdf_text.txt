@@ -1,0 +1,80 @@
+=== PAGE 1 ===
+Practica 06 – Lazycolumn y listas dinámicas 
+ 
+Desarrollo Móvil Nativo 
+1 
+Al finalizar esta práctica, los alumnos serán capaces de mostrar colecciones de datos utilizando 
+LazyColumn, que es el equivalente moderno y optimizado en Jetpack Compose al tradicional 
+RecyclerView de las vistas XML. Comprenderán cómo estructurar un modelo de datos y 
+generar de forma dinámica una lista de elementos que se pueden desplazar eficientemente sin 
+saturar la memoria del dispositivo. 
+ 
+Antes de comenzar con el procedimiento, es importante mencionar que en algunas secciones 
+únicamente se mostrará el bloque de código correspondiente. Esto se debe a que, en las prácticas 
+anteriores, ya se explicó el funcionamiento y la estructura de varios de los componentes utilizados 
+en Jetpack Compose, por lo que no se detallará nuevamente cada elemento paso a paso. A lo 
+largo de esta práctica, nos enfocaremos en explicar únicamente los conceptos y características 
+nuevas que vayan surgiendo durante el desarrollo de la aplicación. Además, en las imágenes que 
+incluyan fragmentos de código fuente, se incorporarán comentarios para facilitar la comprensión 
+de las partes más importantes. 
+Paso 1: Iniciaremos Android Studio y seleccionamos Empty Activity 
+Paso 2: Ponemos el nombre del proyecto como practica06, así como la ruta donde estará mi 
+proyecto y versión de Android la cual estaré manejando.  
+Paso 3: Para mantener una arquitectura de código ordenada, crearemos dos nuevos archivos 
+en la raíz del proyecto (junto a MainActivity.kt): Contacto.kt para nuestro modelo de datos y 
+ListaScreen.kt para la interfaz gráfica principal. 
+ 
+
+
+=== PAGE 2 ===
+Practica 06 – Lazycolumn y listas dinámicas 
+ 
+Desarrollo Móvil Nativo 
+2 
+  
+Como lo hemos hecho en otras practicas. El archivo MainActivity casi no lo tocamos, solo 
+eliminamos las líneas que están dentro del setContent y todo lo que está por fuera de la clase 
+MainActivity.  
+Paso 4: Las listas dinámicas requieren un origen de datos estructurado. Crearemos un data 
+class que represente la información de un contacto individual y una función auxiliar para 
+generar datos de prueba. Tu puedes agregar más datos de prueba en la sesión solo se 
+utilizarán 12 registros. Para ello el código del archivo Contacto.kt es el siguiente: 
+ 
+Paso 5: En el archivo ListaScreen.kt construiremos la UI. LazyColumn es el componente que 
+sustituye la necesidad de configurar Adapters y ViewHolders en un XML . Solo renderiza 
+elementos que son visibles en la pantalla, mejorando así el rendimiento. Aquí definiremos el 
+diseño individual de cada celda con el componente card (tarjeta) y luego vamos a implementar la 
+lista principal. 
+ 
+
+
+=== PAGE 3 ===
+Practica 06 – Lazycolumn y listas dinámicas 
+ 
+Desarrollo Móvil Nativo 
+3 
+ 
+
+
+=== PAGE 4 ===
+Practica 06 – Lazycolumn y listas dinámicas 
+ 
+Desarrollo Móvil Nativo 
+4 
+Paso 6: En el archivo MainActivity.kt en la sección de setContent solo llamamos al Activity que 
+acabamos de crear. El código es el siguiente: 
+ 
+Paso 7: Ejecutar la aplicación y probarla. 
+ 
+Reto (Entregable): 
+Una vez que la lista principal se muestre correctamente, el desafío es añadir interactividad a las 
+tarjetas. Deberás agregar el modificador clickable a la tarjeta Card dentro de la función 
+ContactoItem para que, al presionar sobre cualquier contacto, se despliegue un mensaje 
+emergente de sistema (Toast) con el nombre de la persona seleccionada. 
+Pista: Necesitarás obtener el contexto local usando LocalContext.current. Ya que no puedes 
+llamar a este método directamente en los parámetros de la Card, decláralo al principio de tu 
+Composable y úsalo para armar tu Toast.makeText(context, "Seleccionaste a 
+${contacto.nombre}" , Toast.LENGTH_SHORT. 
+ 
+
+
