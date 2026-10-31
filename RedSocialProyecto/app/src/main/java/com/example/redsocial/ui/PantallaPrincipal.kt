@@ -12,11 +12,14 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material3.*
@@ -44,7 +47,8 @@ import java.util.Locale
 @Composable
 fun PantallaPrincipal(viewModel: PublicacionViewModel) {
     val publicaciones by viewModel.publicaciones.collectAsState()
-    var pestañaSeleccionada by remember { mutableStateOf(0) } // 0: Muro, 1: Formulario
+    var pestañaSeleccionada by remember { mutableStateOf(0) } // 0: Publicaciones, 1: Formulario
+    var publicacionAEditar by remember { mutableStateOf<Publicacion?>(null) }
 
     Scaffold(
         topBar = {
@@ -60,15 +64,20 @@ fun PantallaPrincipal(viewModel: PublicacionViewModel) {
             NavigationBar {
                 NavigationBarItem(
                     selected = pestañaSeleccionada == 0,
-                    onClick = { pestañaSeleccionada = 0 },
-                    icon = { Icon(Icons.Default.List, contentDescription = "Muro") },
+                    onClick = {
+                        pestañaSeleccionada = 0
+                        publicacionAEditar = null
+                    },
+                    icon = { Icon(Icons.Default.List, contentDescription = "Publicaciones") },
                     label = { Text("Publicaciones") }
                 )
                 NavigationBarItem(
                     selected = pestañaSeleccionada == 1,
-                    onClick = { pestañaSeleccionada = 1 },
-                    icon = { Icon(Icons.Default.Add, contentDescription = "Nueva") },
-                    label = { Text("Crear") }
+                    onClick = {
+                        pestañaSeleccionada = 1
+                    },
+                    icon = { Icon(Icons.Default.Add, contentDescription = "Crear") },
+                    label = { Text(if (publicacionAEditar != null) "Editar" else "Crear") }
                 )
             }
         }
@@ -81,13 +90,40 @@ fun PantallaPrincipal(viewModel: PublicacionViewModel) {
             if (pestañaSeleccionada == 0) {
                 VistaListadoPublicaciones(
                     publicaciones = publicaciones,
+                    onEditar = { pub ->
+                        publicacionAEditar = pub
+                        pestañaSeleccionada = 1
+                    },
                     onEliminar = { viewModel.eliminarPublicacion(it) },
-                    onIrACrear = { pestañaSeleccionada = 1 }
+                    onIrACrear = {
+                        publicacionAEditar = null
+                        pestañaSeleccionada = 1
+                    }
                 )
             } else {
                 FormularioAltaPublicacion(
+                    publicacionAEditar = publicacionAEditar,
                     onGuardar = { titulo, descripcion, fotoUri, fecha ->
-                        viewModel.agregarPublicacion(titulo, descripcion, fotoUri, fecha)
+                        val actual = publicacionAEditar
+                        if (actual != null) {
+                            // Modificar publicación existente
+                            viewModel.actualizarPublicacion(
+                                actual.copy(
+                                    titulo = titulo,
+                                    descripcion = descripcion,
+                                    fotoUri = fotoUri,
+                                    fecha = fecha
+                                )
+                            )
+                        } else {
+                            // Crear nueva publicación
+                            viewModel.agregarPublicacion(titulo, descripcion, fotoUri, fecha)
+                        }
+                        publicacionAEditar = null
+                        pestañaSeleccionada = 0
+                    },
+                    onCancelar = {
+                        publicacionAEditar = null
                         pestañaSeleccionada = 0
                     }
                 )
@@ -98,20 +134,24 @@ fun PantallaPrincipal(viewModel: PublicacionViewModel) {
 
 @Composable
 fun FormularioAltaPublicacion(
-    onGuardar: (titulo: String, descripcion: String, fotoUri: String?, fecha: String) -> Unit
+    publicacionAEditar: Publicacion?,
+    onGuardar: (titulo: String, descripcion: String, fotoUri: String?, fecha: String) -> Unit,
+    onCancelar: () -> Unit
 ) {
     val context = LocalContext.current
-    var titulo by remember { mutableStateOf("") }
-    var descripcion by remember { mutableStateOf("") }
-    var fotoUri by remember { mutableStateOf<Uri?>(null) }
-    var tempCameraUri by remember { mutableStateOf<Uri?>(null) }
 
     fun obtenerFechaActual(): String {
         val sdf = SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault())
         return sdf.format(Date())
     }
 
-    var fecha by remember { mutableStateOf(obtenerFechaActual()) }
+    var titulo by remember(publicacionAEditar) { mutableStateOf(publicacionAEditar?.titulo ?: "") }
+    var descripcion by remember(publicacionAEditar) { mutableStateOf(publicacionAEditar?.descripcion ?: "") }
+    var fecha by remember(publicacionAEditar) { mutableStateOf(publicacionAEditar?.fecha ?: obtenerFechaActual()) }
+    var fotoUri by remember(publicacionAEditar) {
+        mutableStateOf(publicacionAEditar?.fotoUri?.let { Uri.parse(it) })
+    }
+    var tempCameraUri by remember { mutableStateOf<Uri?>(null) }
 
     // Launcher para seleccionar imagen de la galería
     val galleryLauncher = rememberLauncherForActivityResult(
@@ -144,14 +184,17 @@ fun FormularioAltaPublicacion(
         }
     }
 
+    val scrollState = rememberScrollState()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .verticalScroll(scrollState)
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         Text(
-            text = "Nueva Publicación",
+            text = if (publicacionAEditar != null) "Modificar Publicación" else "Nueva Publicación",
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold
         )
@@ -182,13 +225,13 @@ fun FormularioAltaPublicacion(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(12.dp),
+                    .padding(horizontal = 12.dp, vertical = 8.dp),
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
                     text = "Fecha: $fecha",
-                    fontSize = 14.sp
+                    fontSize = 13.sp
                 )
                 TextButton(onClick = { fecha = obtenerFechaActual() }) {
                     Text("Actualizar")
@@ -200,7 +243,7 @@ fun FormularioAltaPublicacion(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(180.dp)
+                .height(140.dp)
                 .clip(RoundedCornerShape(8.dp))
                 .background(Color(0xFFEEEEEE))
                 .border(1.dp, Color.LightGray, RoundedCornerShape(8.dp)),
@@ -209,7 +252,7 @@ fun FormularioAltaPublicacion(
             if (fotoUri != null) {
                 AsyncImage(
                     model = fotoUri,
-                    contentDescription = "Foto seleccionada",
+                    contentDescription = "Foto de la publicación",
                     modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.Crop
                 )
@@ -217,7 +260,7 @@ fun FormularioAltaPublicacion(
                 Text(
                     text = "Sin fotografía seleccionada",
                     color = Color.Gray,
-                    fontSize = 14.sp
+                    fontSize = 13.sp
                 )
             }
         }
@@ -261,28 +304,40 @@ fun FormularioAltaPublicacion(
             }
         }
 
-        Spacer(modifier = Modifier.height(8.dp))
-
-        // Botón Guardar
+        // Botón Guardar / Modificar
         Button(
             onClick = {
                 if (titulo.isBlank() || descripcion.isBlank()) {
                     Toast.makeText(context, "Por favor llena título y descripción", Toast.LENGTH_SHORT).show()
                 } else {
                     onGuardar(titulo, descripcion, fotoUri?.toString(), fecha)
-                    Toast.makeText(context, "Publicación guardada", Toast.LENGTH_SHORT).show()
+                    val mensaje = if (publicacionAEditar != null) "Publicación modificada" else "Publicación guardada"
+                    Toast.makeText(context, mensaje, Toast.LENGTH_SHORT).show()
                 }
             },
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text("Guardar Publicación")
+            Text(if (publicacionAEditar != null) "Guardar Cambios" else "Guardar Publicación")
         }
+
+        // Botón Cancelar (si está editando)
+        if (publicacionAEditar != null) {
+            OutlinedButton(
+                onClick = onCancelar,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text("Cancelar Edición")
+            }
+        }
+
+        Spacer(modifier = Modifier.height(24.dp))
     }
 }
 
 @Composable
 fun VistaListadoPublicaciones(
     publicaciones: List<Publicacion>,
+    onEditar: (Publicacion) -> Unit,
     onEliminar: (Publicacion) -> Unit,
     onIrACrear: () -> Unit
 ) {
@@ -312,7 +367,11 @@ fun VistaListadoPublicaciones(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             items(publicaciones, key = { it.id }) { item ->
-                TarjetaPublicacion(publicacion = item, onEliminar = { onEliminar(item) })
+                TarjetaPublicacion(
+                    publicacion = item,
+                    onEditar = { onEditar(item) },
+                    onEliminar = { onEliminar(item) }
+                )
             }
         }
     }
@@ -321,6 +380,7 @@ fun VistaListadoPublicaciones(
 @Composable
 fun TarjetaPublicacion(
     publicacion: Publicacion,
+    onEditar: () -> Unit,
     onEliminar: () -> Unit
 ) {
     Card(
@@ -334,7 +394,7 @@ fun TarjetaPublicacion(
                     contentDescription = publicacion.titulo,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(200.dp),
+                        .height(190.dp),
                     contentScale = ContentScale.Crop
                 )
             }
@@ -348,14 +408,25 @@ fun TarjetaPublicacion(
                     Text(
                         text = publicacion.titulo,
                         fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier.weight(1f)
                     )
-                    IconButton(onClick = onEliminar) {
-                        Icon(
-                            imageVector = Icons.Default.Delete,
-                            contentDescription = "Eliminar",
-                            tint = Color.Gray
-                        )
+
+                    Row {
+                        IconButton(onClick = onEditar) {
+                            Icon(
+                                imageVector = Icons.Default.Edit,
+                                contentDescription = "Modificar",
+                                tint = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                        IconButton(onClick = onEliminar) {
+                            Icon(
+                                imageVector = Icons.Default.Delete,
+                                contentDescription = "Eliminar",
+                                tint = MaterialTheme.colorScheme.error
+                            )
+                        }
                     }
                 }
 

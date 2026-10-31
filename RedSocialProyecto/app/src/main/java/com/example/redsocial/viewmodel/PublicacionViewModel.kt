@@ -32,6 +32,12 @@ class PublicacionViewModel(application: Application) : AndroidViewModel(applicat
         }
     }
 
+    fun actualizarPublicacion(publicacion: Publicacion) {
+        viewModelScope.launch {
+            dao.actualizar(publicacion)
+        }
+    }
+
     fun eliminarPublicacion(publicacion: Publicacion) {
         viewModelScope.launch {
             dao.eliminar(publicacion)
