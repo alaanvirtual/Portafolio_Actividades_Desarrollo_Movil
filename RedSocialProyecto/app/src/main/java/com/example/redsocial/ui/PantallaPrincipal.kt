@@ -1,6 +1,7 @@
 package com.example.redsocial.ui
 
 import android.Manifest
+import android.app.DatePickerDialog
 import android.content.Context
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -16,12 +17,13 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.CameraAlt
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Image
-import androidx.compose.material.icons.filled.List
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -40,6 +42,7 @@ import com.example.redsocial.data.Publicacion
 import com.example.redsocial.viewmodel.PublicacionViewModel
 import java.io.File
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Date
 import java.util.Locale
 
@@ -68,7 +71,7 @@ fun PantallaPrincipal(viewModel: PublicacionViewModel) {
                         pestañaSeleccionada = 0
                         publicacionAEditar = null
                     },
-                    icon = { Icon(Icons.Default.List, contentDescription = "Publicaciones") },
+                    icon = { Icon(Icons.AutoMirrored.Filled.List, contentDescription = "Publicaciones") },
                     label = { Text("Publicaciones") }
                 )
                 NavigationBarItem(
@@ -153,6 +156,23 @@ fun FormularioAltaPublicacion(
     }
     var tempCameraUri by remember { mutableStateOf<Uri?>(null) }
 
+    // Diálogo selector de fecha (DatePickerDialog)
+    val calendario = Calendar.getInstance()
+    val datePickerDialog = remember {
+        DatePickerDialog(
+            context,
+            { _, year, month, dayOfMonth ->
+                val horaActual = SimpleDateFormat("HH:mm", Locale.getDefault()).format(Date())
+                val mesFormateado = String.format(Locale.getDefault(), "%02d", month + 1)
+                val diaFormateado = String.format(Locale.getDefault(), "%02d", dayOfMonth)
+                fecha = "$diaFormateado/$mesFormateado/$year $horaActual"
+            },
+            calendario.get(Calendar.YEAR),
+            calendario.get(Calendar.MONTH),
+            calendario.get(Calendar.DAY_OF_MONTH)
+        )
+    }
+
     // Launcher para seleccionar imagen de la galería
     val galleryLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
@@ -217,24 +237,42 @@ fun FormularioAltaPublicacion(
             maxLines = 4
         )
 
-        // Componente para visualizar la Fecha
+        // Componente para visualizar y elegir la Fecha
         Card(
             modifier = Modifier.fillMaxWidth(),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
         ) {
-            Row(
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 12.dp, vertical = 8.dp),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
+                    .padding(12.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Text(
                     text = "Fecha: $fecha",
-                    fontSize = 13.sp
+                    fontSize = 14.sp,
+                    fontWeight = FontWeight.Medium
                 )
-                TextButton(onClick = { fecha = obtenerFechaActual() }) {
-                    Text("Actualizar")
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    OutlinedButton(
+                        onClick = { datePickerDialog.show() },
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Icon(Icons.Default.DateRange, contentDescription = null, modifier = Modifier.size(18.dp))
+                        Spacer(modifier = Modifier.width(6.dp))
+                        Text("Elegir Fecha", fontSize = 12.sp)
+                    }
+
+                    OutlinedButton(
+                        onClick = { fecha = obtenerFechaActual() },
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text("Fecha Actual", fontSize = 12.sp)
+                    }
                 }
             }
         }
