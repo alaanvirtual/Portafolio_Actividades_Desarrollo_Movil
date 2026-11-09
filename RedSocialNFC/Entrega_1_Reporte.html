@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<style>
+  @page {
+    size: letter;
+    margin: 18mm 18mm 18mm 18mm;
+  }
+  body {
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+    color: #1a1a24;
+    line-height: 1.5;
+    background: #ffffff;
+    font-size: 11pt;
+  }
+  .header-box {
+    border-bottom: 3px solid #ff007f;
+    padding-bottom: 12px;
+    margin-bottom: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+  .title {
+    font-size: 20pt;
+    font-weight: 800;
+    color: #0b0813;
+    margin: 0;
+    letter-spacing: -0.5px;
+  }
+  .subtitle {
+    font-size: 12pt;
+    color: #8a2be2;
+    font-weight: 600;
+    margin: 4px 0 0 0;
+  }
+  .meta-info {
+    text-align: right;
+    font-size: 9pt;
+    color: #555;
+  }
+  .badge-tag {
+    display: inline-block;
+    padding: 3px 8px;
+    font-size: 8.5pt;
+    font-weight: bold;
+    border-radius: 4px;
+    background: #eef2ff;
+    color: #3730a3;
+  }
+  .badge-success {
+    background: #ecfdf5;
+    color: #065f46;
+    border: 1px solid #a7f3d0;
+  }
+  h2 {
+    font-size: 13pt;
+    color: #0b0813;
+    border-left: 4px solid #ff007f;
+    padding-left: 8px;
+    margin-top: 20px;
+    margin-bottom: 8px;
+  }
+  h3 {
+    font-size: 11pt;
+    color: #8a2be2;
+    margin-top: 14px;
+    margin-bottom: 6px;
+  }
+  p {
+    margin: 0 0 10px 0;
+    text-align: justify;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0 18px 0;
+    font-size: 9pt;
+  }
+  th {
+    background: #14111e;
+    color: #ffffff;
+    text-align: left;
+    padding: 8px 10px;
+    font-weight: 600;
+  }
+  td {
+    padding: 8px 10px;
+    border-bottom: 1px solid #e5e7eb;
+    vertical-align: top;
+  }
+  tr:nth-child(even) td {
+    background: #fbfbfe;
+  }
+  .code-block {
+    background: #f4f3f8;
+    border: 1px solid #e2dfea;
+    border-radius: 6px;
+    padding: 8px 12px;
+    font-family: Consolas, monospace;
+    font-size: 8.5pt;
+    color: #2e253f;
+    margin: 8px 0 12px 0;
+  }
+  .highlight-card {
+    background: #fdf2f8;
+    border: 1px solid #fbcfe8;
+    border-left: 4px solid #ff007f;
+    border-radius: 6px;
+    padding: 10px 14px;
+    margin: 12px 0;
+  }
+  .highlight-card strong {
+    color: #9d174d;
+  }
+  .color-swatch {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
+    margin-right: 4px;
+    vertical-align: middle;
+    border: 1px solid rgba(0,0,0,0.1);
+  }
+  .footer {
+    margin-top: 30px;
+    border-top: 1px solid #e5e7eb;
+    padding-top: 10px;
+    font-size: 8.5pt;
+    color: #6b7280;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+
+<div class="header-box">
+  <div>
+    <h1 class="title">REPORTE DE PROYECTO: ENTREGA 1</h1>
+    <div class="subtitle">RedSocialNFC · Red Social de Proximidad Criptográfica</div>
+  </div>
+  <div class="meta-info">
+    <div><strong>Materia:</strong> Desarrollo Móvil (Android)</div>
+    <div><strong>Proyecto:</strong> RedSocialNFC (Portafolio)</div>
+    <div><strong>Fecha de Entrega:</strong> Noviembre 2026</div>
+    <div><span class="badge-tag badge-success">Estado: Compilación Exitosa (0 Errores)</span></div>
+  </div>
+</div>
+
+<h2>1. Resumen Ejecutivo</h2>
+<p>
+El presente documento describe los resultados técnicos y de diseño implementados para la <strong>Entrega 1</strong> de la aplicación móvil <strong>RedSocialNFC</strong>. El objetivo principal de esta fase es establecer la base arquitectónica del sistema, la gestión de doble identidad (identidad real y seudónimo anónimo) y el registro criptográfico de hardware para comunicación por proximidad NFC, en estricto apego a las directrices de <strong>Material Design 3 (Jetpack Compose)</strong> y la paleta temática <em>Digital Alchemy</em>.
+</p>
+
+<h2>2. Matriz de Requerimientos Funcionales Implementados</h2>
+<table>
+  <thead>
+    <tr>
+      <th style="width: 10%;">ID</th>
+      <th style="width: 18%;">Requerimiento</th>
+      <th style="width: 25%;">Control Seleccionado (MD3)</th>
+      <th style="width: 32%;">Justificación de UX y Prevención de Errores</th>
+      <th style="width: 15%;">Estado</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>RF-01</strong></td>
+      <td><strong>Autenticación</strong></td>
+      <td><code>OutlinedTextField</code> con <code>TrailingIcon</code></td>
+      <td>El marco delimitador destaca en el fondo oscuro. El ícono conmutador de visibilidad (ojo) previene errores de escritura al ingresar la contraseña.</td>
+      <td><span class="badge-tag badge-success">Completado</span></td>
+    </tr>
+    <tr>
+      <td><strong>RF-02</strong></td>
+      <td><strong>Handle Real</strong></td>
+      <td><code>OutlinedTextField</code> con <code>prefixText = "@"</code></td>
+      <td>Incorpora el símbolo <code>@</code> de forma fija y bloqueada a la izquierda, previniendo duplicidades y filtrando caracteres no alfanuméricos.</td>
+      <td><span class="badge-tag badge-success">Completado</span></td>
+    </tr>
+    <tr>
+      <td><strong>RF-03</strong></td>
+      <td><strong>Identidad Anónima</strong></td>
+      <td><code>Surface / Text</code> estático con badge</td>
+      <td>Valor autogenerado por el sistema inalterable por el usuario (ej. <code>@Anonimo_89B</code>) para la vista pública de 2do grado. Sin control de entrada para evitar manipulaciones.</td>
+      <td><span class="badge-tag badge-success">Completado</span></td>
+    </tr>
+    <tr>
+      <td><strong>RF-04</strong></td>
+      <td><strong>Identificador Criptográfico NFC</strong></td>
+      <td>Proceso en segundo plano (Sin UI)</td>
+      <td>Generación y vinculación automática de un identificador único privado (UUID de 128 bits) asociado a la antena del hardware sin intervención manual del usuario.</td>
+      <td><span class="badge-tag badge-success">Completado</span></td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>3. Arquitectura y Persistencia de Datos</h2>
+<p>
+Para garantizar el funcionamiento sin conexión a internet y mantener la coherencia con el temario del curso, se implementó un esquema de <strong>doble almacenamiento local</strong>:
+</p>
+
+<div class="highlight-card">
+  <strong>1. Base de Datos SQLite Local (Room Database):</strong> Almacena de forma estructurada los registros en la tabla <code>usuarios</code>, incluyendo credenciales, handles y UUIDs vinculados.<br>
+  <strong>2. SharedPreferences (SessionManager):</strong> Gestiona la persistencia de la sesión activa para que el usuario no deba reautenticarse al reiniciar la aplicación, conservando el UUID de hardware asignado.
+</div>
+
+<h3>Estructura de la Entidad de Datos (Room)</h3>
+<div class="code-block">
+@Entity(tableName = "usuarios")<br>
+data class Usuario(<br>
+&nbsp;&nbsp;&nbsp;&nbsp;@PrimaryKey(autoGenerate = true) val id: Int = 0,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;val email: String,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;val passwordHash: String,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;val realHandle: String,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// RF-02: @handle real único<br>
+&nbsp;&nbsp;&nbsp;&nbsp;val anonHandle: String,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// RF-03: Pseudónimo inalterable (@Anonimo_XX)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;val nfcUuid: String,&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;// RF-04: UUID privado para antena NFC<br>
+&nbsp;&nbsp;&nbsp;&nbsp;val fechaRegistro: Long = System.currentTimeMillis()<br>
+)
+</div>
+
+<h2>4. Diseño Visual: Paleta "Digital Alchemy"</h2>
+<p>
+La aplicación adopta una identidad visual basada en la temática místico-criptográfica <em>Digital Alchemy</em> mediante un esquema de colores oscuros con acentos neón:
+</p>
+<ul>
+  <li><span class="color-swatch" style="background: #0B0813;"></span><strong>Dark Background (#0B0813):</strong> Fondo principal ultra oscuro de alta inmersión.</li>
+  <li><span class="color-swatch" style="background: #FF007F;"></span><strong>Neon Magenta (#FF007F):</strong> Acento principal para la identidad real de 1er grado (conexiones directas por NFC).</li>
+  <li><span class="color-swatch" style="background: #8A2BE2;"></span><strong>Electric Violet (#8A2BE2):</strong> Acento secundario para elementos de 2do grado y seudónimos anónimos.</li>
+  <li><span class="color-swatch" style="background: #00E5FF;"></span><strong>Neon Cyan (#00E5FF):</strong> Distintivo de hardware, criptografía y estado de la antena NFC.</li>
+</ul>
+
+<h2>5. Flujo Operativo de la Aplicación</h2>
+<ol>
+  <li><strong>Inicio del Sistema:</strong> <code>MainActivity</code> consulta a <code>SessionManager</code> si existe una sesión abierta. Si no existe, presenta <code>AuthScreen</code>.</li>
+  <li><strong>Registro de Identidad:</strong> El usuario ingresa su correo, contraseña y su handle deseado. El sistema valida en tiempo real la no duplicidad, genera en memoria su seudónimo inalterable y su UUID de hardware.</li>
+  <li><strong>Persistencia y Navegación:</strong> Se guardan los datos en Room y SharedPreferences, redirigiendo al usuario a <code>PerfilScreen</code>.</li>
+  <li><strong>Visor de Identidad:</strong> Muestra de forma clara la separación entre la identidad real de 1er grado y la anónima de 2do grado, permitiendo cerrar sesión en cualquier momento.</li>
+</ol>
+
+<h2>6. Estado de Compilación y Repositorio</h2>
+<table>
+  <tr>
+    <td style="width: 30%;"><strong>Repositorio GitHub:</strong></td>
+    <td><code>alaanvirtual/Portafolio_Actividades_Desarrollo_Movil</code></td>
+  </tr>
+  <tr>
+    <td><strong>Commit de Entrega:</strong></td>
+    <td><code>b705034</code> (Rama <code>main</code>)</td>
+  </tr>
+  <tr>
+    <td><strong>Herramienta de Build:</strong></td>
+    <td>Gradle 9.3.2 / Kotlin 2.2.10 / KSP 2.2.10 / Android SDK 37</td>
+  </tr>
+  <tr>
+    <td><strong>Resultado de Compilación:</strong></td>
+    <td><code>BUILD SUCCESSFUL in 24s (37 actionable tasks)</code></td>
+  </tr>
+</table>
+
+<div class="footer">
+  Reporte de Entrega 1 · RedSocialNFC · Portafolio de Prácticas de Desarrollo Móvil
+</div>
+
+</body>
+</html>
