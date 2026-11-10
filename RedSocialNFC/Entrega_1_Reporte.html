@@ -15,7 +15,7 @@
     font-size: 10pt;
   }
   .header-box {
-    border-bottom: 3px solid #ff007f;
+    border-bottom: 3px solid #7e639b;
     padding-bottom: 10px;
     margin-bottom: 18px;
     display: flex;
@@ -25,13 +25,13 @@
   .title {
     font-size: 18pt;
     font-weight: 800;
-    color: #0b0813;
+    color: #141318;
     margin: 0;
     letter-spacing: -0.5px;
   }
   .subtitle {
     font-size: 11pt;
-    color: #8a2be2;
+    color: #7e639b;
     font-weight: 600;
     margin: 3px 0 0 0;
   }
@@ -46,8 +46,8 @@
     font-size: 8pt;
     font-weight: bold;
     border-radius: 4px;
-    background: #eef2ff;
-    color: #3730a3;
+    background: #f0edf5;
+    color: #55416c;
   }
   .badge-success {
     background: #ecfdf5;
@@ -56,8 +56,8 @@
   }
   h2 {
     font-size: 12pt;
-    color: #0b0813;
-    border-left: 4px solid #ff007f;
+    color: #141318;
+    border-left: 4px solid #7e639b;
     padding-left: 8px;
     margin-top: 16px;
     margin-bottom: 6px;
@@ -66,7 +66,7 @@
   }
   h3 {
     font-size: 10pt;
-    color: #8a2be2;
+    color: #6e687a;
     margin-top: 10px;
     margin-bottom: 4px;
     font-weight: bold;
@@ -82,7 +82,7 @@
     font-size: 8.5pt;
   }
   th {
-    background: #14111e;
+    background: #1c1a22;
     color: #ffffff;
     text-align: left;
     padding: 6px 8px;
@@ -99,26 +99,26 @@
   .code-block {
     background: #f4f3f8;
     border: 1px solid #e2dfea;
-    border-left: 3px solid #8a2be2;
+    border-left: 3px solid #7e639b;
     border-radius: 4px;
     padding: 6px 10px;
     font-family: Consolas, monospace;
     font-size: 8pt;
-    color: #2e253f;
+    color: #24212c;
     margin: 6px 0 10px 0;
     line-height: 1.35;
   }
   .highlight-card {
-    background: #fdf2f8;
-    border: 1px solid #fbcfe8;
-    border-left: 4px solid #ff007f;
+    background: #f6f4f9;
+    border: 1px solid #e5dfec;
+    border-left: 4px solid #7e639b;
     border-radius: 6px;
     padding: 8px 12px;
     margin: 8px 0;
     font-size: 9pt;
   }
   .highlight-card strong {
-    color: #9d174d;
+    color: #55416c;
   }
   .color-swatch {
     display: inline-block;
@@ -151,11 +151,11 @@
 <div class="header-box">
   <div>
     <h1 class="title">REPORTE TÉCNICO: ENTREGA 1</h1>
-    <div class="subtitle">RedSocialNFC · Arquitectura, Frameworks y Funcionamiento del Código</div>
+    <div class="subtitle">Local · Red Social de Proximidad Criptográfica</div>
   </div>
   <div class="meta-info">
     <div><strong>Materia:</strong> Desarrollo Móvil (Android)</div>
-    <div><strong>Proyecto:</strong> RedSocialNFC</div>
+    <div><strong>Aplicación:</strong> Local (RedSocialNFC)</div>
     <div><strong>Rama GitHub:</strong> main (alaanvirtual)</div>
     <div><span class="badge-tag badge-success">Compilación: BUILD SUCCESSFUL (0 errores)</span></div>
   </div>
@@ -163,7 +163,7 @@
 
 <h2>1. Bibliotecas y Frameworks Utilizados</h2>
 <p>
-El proyecto fue construido utilizando el ecosistema oficial y moderno recomendado por Google para Android, asegurando un rendimiento nativo óptimo y compatibilidad declarativa:
+La aplicación <strong>Local</strong> está construida siguiendo la arquitectura recomendada por Google para Android moderno, utilizando tecnologías declarativas y persistencia local sin conexión:
 </p>
 
 <table>
@@ -183,12 +183,12 @@ El proyecto fue construido utilizando el ecosistema oficial y moderno recomendad
     <tr>
       <td><strong>Material Design 3 (Material3)</strong></td>
       <td><code>1.3.x</code></td>
-      <td>Sistema de diseño oficial de última generación. Provee componentes avanzados con accesibilidad nativa como <code>OutlinedTextField</code>, <code>Card</code>, <code>Surface</code>, <code>Scaffold</code> y soporte completo para paleta oscura dinámica.</td>
+      <td>Sistema de diseño oficial adaptado a una paleta sobria de morados y grises mate (no luminosos). Provee componentes accesibles como <code>OutlinedTextField</code>, <code>Card</code>, <code>Surface</code> y <code>Scaffold</code>.</td>
     </tr>
     <tr>
       <td><strong>AndroidX Room Database</strong></td>
       <td><code>2.8.4</code></td>
-      <td>Capa de abstracción sobre SQLite local. Provee mapeo objeto-relacional (ORM), verificación de consultas SQL en tiempo de compilación y persistencia segura de usuarios sin requerir conexión a internet.</td>
+      <td>Capa de abstracción sobre SQLite local. Provee mapeo objeto-relacional (ORM), verificación de consultas SQL en tiempo de compilación y persistencia segura de usuarios sin conexión a internet.</td>
     </tr>
     <tr>
       <td><strong>KSP (Kotlin Symbol Processing)</strong></td>
@@ -203,7 +203,7 @@ El proyecto fue construido utilizando el ecosistema oficial y moderno recomendad
     <tr>
       <td><strong>SharedPreferences</strong></td>
       <td>Nativo Android</td>
-      <td>Almacenamiento clave-valor ligero en memoria para persistir la sesión abierta y fijar el identificador UUID único del hardware entre reinicios de la aplicación.</td>
+      <td>Almacenamiento clave-valor ligero en memoria para persistir la sesión activa y fijar el identificador UUID único del hardware entre reinicios de la aplicación.</td>
     </tr>
     <tr>
       <td><strong>Material Icons Extended</strong></td>
@@ -220,13 +220,12 @@ El proyecto fue construido utilizando el ecosistema oficial y moderno recomendad
 
 <h2>2. Funcionamiento Detallado del Código</h2>
 <p>
-El proyecto sigue el patrón arquitectónico limpio y modular visto a lo largo de las prácticas del curso, separando claramente la vista, el dominio, los datos y las utilidades:
+La aplicación <strong>Local</strong> implementa una arquitectura desacoplada y limpia acorde a los módulos vistos en el curso:
 </p>
 
 <h3>A. Punto de Entrada y Navegación Reactiva (<code>MainActivity.kt</code>)</h3>
 <p>
-La aplicación utiliza una sola actividad (<em>Single Activity Architecture</em>) con renderizado de borde a borde (<code>enableEdgeToEdge()</code>). 
-En lugar de depender de navegadores complejos, gestiona el estado de sesión de forma reactiva con Compose:
+Implementa una sola actividad con diseño de borde a borde (<code>enableEdgeToEdge()</code>). Gestiona el estado de sesión de forma reactiva en memoria:
 </p>
 <div class="code-block">
 var sesionActiva by remember { mutableStateOf(sessionManager.haySesionActiva()) }<br>
@@ -237,74 +236,72 @@ if (sesionActiva) {<br>
 }
 </div>
 <p>
-Al cambiar la variable <code>sesionActiva</code>, Compose recompone instantáneamente la interfaz cambiando entre la pantalla de autenticación y la pantalla de perfil sin destruir la actividad.
+Cuando el usuario inicia sesión o la cierra, la variable <code>sesionActiva</code> cambia de valor y Compose recompone de inmediato la vista correspondiente sin necesidad de recargar la actividad ni usar enrutadores pesados.
 </p>
 
 <h3>B. Capa de Datos y Persistencia SQLite (<code>Usuario.kt</code>, <code>UsuarioDao.kt</code>, <code>AppDatabase.kt</code>)</h3>
 <ul>
-  <li><strong>Entidad (<code>Usuario.kt</code>):</strong> Modela la tabla <code>usuarios</code>. Almacena <code>id</code> (clave primaria autoincremental), <code>email</code>, <code>passwordHash</code>, <code>realHandle</code> (identidad real de 1er grado), <code>anonHandle</code> (identidad anónima de 2do grado) y <code>nfcUuid</code> (identificador criptográfico para la antena).</li>
-  <li><strong>DAO (<code>UsuarioDao.kt</code>):</strong> Interfaz que define las operaciones de acceso a datos mediante corrutinas:
+  <li><strong>Entidad (<code>Usuario.kt</code>):</strong> Modela la tabla <code>usuarios</code>. Almacena <code>id</code> (autoincremental), <code>email</code>, <code>passwordHash</code>, <code>realHandle</code> (identidad real de 1er grado), <code>anonHandle</code> (identidad anónima de 2do grado) y <code>nfcUuid</code> (identificador criptográfico para la antena).</li>
+  <li><strong>DAO (<code>UsuarioDao.kt</code>):</strong> Interfaz con corrutinas (<code>suspend fun</code>) para inserciones y consultas parametrizadas seguras contra inyección SQL:
     <ul>
-      <li><code>registrarUsuario(usuario: Usuario): Long</code>: Inserta el nuevo registro abortando duplicados.</li>
-      <li><code>obtenerPorEmail(email: String): Usuario?</code>: Consulta parametrizada para validar login sin riesgo de inyección SQL.</li>
-      <li><code>obtenerPorHandle(realHandle: String): Usuario?</code>: Verifica la unicidad del nombre de usuario.</li>
+      <li><code>registrarUsuario(usuario: Usuario): Long</code>: Inserta el registro abortando duplicados.</li>
+      <li><code>obtenerPorEmail(email: String): Usuario?</code>: Valida credenciales de inicio de sesión.</li>
+      <li><code>obtenerPorHandle(realHandle: String): Usuario?</code>: Comprueba la disponibilidad del nombre de usuario.</li>
     </ul>
   </li>
-  <li><strong>Singleton Database (<code>AppDatabase.kt</code>):</strong> Instancia única de la base de datos Room protegida por bloqueo sincronizado (<code>@Volatile</code> y <code>synchronized</code>) para evitar múltiples conexiones concurrentes.</li>
+  <li><strong>Base de Datos Singleton (<code>AppDatabase.kt</code>):</strong> Única instancia protegida con <code>@Volatile</code> y <code>synchronized</code> para asegurar transacciones concurrentes libres de bloqueos.</li>
 </ul>
 
 <h3>C. Capa de Sesión y Criptografía de Hardware (<code>SessionManager.kt</code>)</h3>
-<p>
-Gestiona la persistencia liviana y contiene los algoritmos requeridos por la especificación:
-</p>
 <ul>
   <li><strong>RF-04 (Identificador Criptográfico NFC de Fondo):</strong>
-    La función <code>obtenerOGenerarDeviceNfcUuid()</code> consulta si el dispositivo ya tiene un UUID asignado en <code>SharedPreferences</code>. Si no existe, invoca <code>java.util.UUID.randomUUID().toString()</code>, generando un hash de 128 bits único y permanente para el hardware. Este proceso es completamente transparente para el usuario.
+    La función <code>obtenerOGenerarDeviceNfcUuid()</code> revisa si el dispositivo ya cuenta con un identificador guardado en <code>SharedPreferences</code>. De no ser así, genera un hash de 128 bits mediante <code>java.util.UUID.randomUUID().toString()</code> y lo almacena de manera definitiva. Esto se ejecuta de forma totalmente transparente para el usuario sin requerir controles en pantalla.
   </li>
   <li><strong>RF-03 (Generador de Identidad Anónima Inalterable):</strong>
-    La función <code>generarIdentidadAnonima()</code> combina números aleatorios entre 10 y 99 con caracteres alfabéticos (A-Z) para producir etiquetas del tipo <code>@Anonimo_89B</code>, garantizando anonimato en interacciones de 2do grado.
+    La función <code>generarIdentidadAnonima()</code> crea combinaciones pseudoaleatorias del tipo <code>@Anonimo_XX</code> (números y letras) que servirán como seudónimo inalterable para las vistas de 2do grado.
   </li>
 </ul>
 
 <h3>D. Pantalla de Autenticación y Registro (<code>AuthScreen.kt</code>)</h3>
 <p>
-Implementa la lógica interactiva de entrada con prevención preventiva de errores (UX):
+Integra los controles interactivos con prevención preventiva de errores (UX):
 </p>
 <ul>
   <li><strong>RF-01 (Conmutador de Visibilidad de Contraseña):</strong>
-    Utiliza una variable booleana <code>passwordVisible</code>. Cuando es falsa, el campo activa <code>PasswordVisualTransformation()</code>; cuando es verdadera, usa <code>VisualTransformation.None</code>. El botón <code>IconButton</code> en el <code>trailingIcon</code> permite al usuario verificar lo escrito y corregir errores antes de enviar el formulario.
+    Mediante una variable <code>passwordVisible</code>, el campo alterna entre <code>PasswordVisualTransformation()</code> (puntos ocultos) y <code>VisualTransformation.None</code> (texto plano). El botón <code>IconButton</code> en el <code>trailingIcon</code> permite al usuario verificar lo escrito y prevenir equivocaciones en la contraseña.
   </li>
-  <li><strong>RF-02 (Handle Real con Prefijo Fijo):</strong>
-    Se implementa con <code>prefix = { Text("@") }</code> dentro de <code>OutlinedTextField</code>. Además, el evento <code>onValueChange</code> filtra activamente cualquier espacio o carácter no alfanumérico en tiempo real mediante <code>it.filter { it.isLetterOrDigit() || it == '_' }</code>.
+  <li><strong>RF-02 (Handle Real con Prefijo '@' Fijo):</strong>
+    Implementado con <code>prefix = { Text("@") }</code> dentro de <code>OutlinedTextField</code>. El evento <code>onValueChange</code> filtra activamente cualquier espacio o carácter no alfanumérico en tiempo real mediante <code>it.filter { it.isLetterOrDigit() || it == '_' }</code>.
   </li>
   <li><strong>RF-03 (Presentación de Identidad Inalterable):</strong>
-    El seudónimo anónimo autogenerado se renderiza dentro de un contenedor <code>Surface</code> estático decorado con una insignia <strong>"FIJO"</strong>. Al no utilizar un componente <code>TextField</code>, se imposibilita cualquier modificación o manipulación del texto por parte del usuario.
+    El seudónimo anónimo autogenerado se presenta dentro de un <code>Surface</code> estático con la etiqueta <strong>"FIJO"</strong>. Al no disponer de un campo de texto editable, se impide que el usuario altere su identidad anónima.
   </li>
-  <li><strong>Validación Asíncrona:</strong>
-    Al pulsar "REGISTRAR IDENTIDAD", se lanza una corrutina (<code>scope.launch</code>) que verifica en la base de datos Room que el correo y el handle no se encuentren duplicados antes de confirmar la inserción.
+  <li><strong>Validaciones Asíncronas:</strong>
+    Al pulsar "REGISTRAR IDENTIDAD", una corrutina (<code>scope.launch</code>) verifica en Room la disponibilidad de correo y handle antes de registrar.
   </li>
 </ul>
 
 <h3>E. Pantalla de Perfil de Identidad (<code>PerfilScreen.kt</code>)</h3>
 <p>
-Representa el panel de estado del usuario tras autenticarse:
+Despliega el panel de identidades del usuario tras ingresar al sistema:
 </p>
 <ul>
-  <li><strong>Tarjeta de 1er Grado (Magenta Neón):</strong> Destaca el <code>realHandle</code> con el color distintivo de contactos directos.</li>
-  <li><strong>Tarjeta de 2do Grado (Gris-Violeta):</strong> Presenta el <code>anonHandle</code> informando al usuario cómo lo visualizarán los contactos no vinculados.</li>
-  <li><strong>Tarjeta de Hardware:</strong> Expone el <code>nfcUuid</code> generado por el sistema que se usará para el sensor en la Entrega Final.</li>
-  <li><strong>Cierre de Sesión Seguro:</strong> Al presionar el botón de salida, se invoca <code>sessionManager.cerrarSesion()</code>, limpiando la memoria activa y devolviendo al usuario a la pantalla inicial.</li>
+  <li><strong>Tarjeta de 1er Grado (Morado Mate):</strong> Muestra el <code>realHandle</code> con el color sobrio característico de conexiones confirmadas por NFC.</li>
+  <li><strong>Tarjeta de 2do Grado (Gris Violeta Mate):</strong> Muestra el seudónimo <code>anonHandle</code> informando cómo se verá el usuario ante contactos no verificados.</li>
+  <li><strong>Tarjeta de Hardware Criptográfico:</strong> Muestra el <code>nfcUuid</code> vinculado que se empleará con la antena en la Entrega Final.</li>
+  <li><strong>Cierre de Sesión:</strong> Limpia la memoria activa de <code>SharedPreferences</code> y redirige instantáneamente a la pantalla de acceso.</li>
 </ul>
 
-<h2>3. Especificación del Tema Visual (Digital Alchemy)</h2>
+<h2>3. Especificación del Tema Visual (Morados y Grises Mate)</h2>
 <p>
-El archivo <code>Color.kt</code> y <code>Theme.kt</code> definen el sistema cromático oscuro de alto contraste:
+Para satisfacer el requerimiento de una estética sobria, elegante y <strong>no luminosa</strong>, se ajustó la paleta cromática en <code>Color.kt</code> y <code>Theme.kt</code>:
 </p>
 <ul>
-  <li><span class="color-swatch" style="background: #0B0813;"></span><strong>DarkBackground (<code>#0B0813</code>):</strong> Fondo inmersivo que reduce fatiga visual y consumo energético en pantallas OLED.</li>
-  <li><span class="color-swatch" style="background: #FF007F;"></span><strong>NeonMagenta (<code>#FF007F</code>):</strong> Color primario de acento para la identidad real y botones principales de acción.</li>
-  <li><span class="color-swatch" style="background: #8A2BE2;"></span><strong>ElectricViolet (<code>#8A2BE2</code>):</strong> Color secundario asignado a la capa de anonimato y vistas de 2do grado.</li>
-  <li><span class="color-swatch" style="background: #00E5FF;"></span><strong>NeonCyan (<code>#00E5FF</code>):</strong> Acento terciario para indicadores criptográficos y hardware NFC.</li>
+  <li><span class="color-swatch" style="background: #141318;"></span><strong>DarkBackground (<code>#141318</code>):</strong> Fondo gris grafito mate profundo que elimina reflejos molestos y reduce la fatiga visual.</li>
+  <li><span class="color-swatch" style="background: #7E639B;"></span><strong>MutedPurple (<code>#7E639B</code>):</strong> Morado sobrio / mate para la identidad real de 1er grado (NFC) y botones de acción.</li>
+  <li><span class="color-swatch" style="background: #6E687A;"></span><strong>MutedGray (<code>#6E687A</code>):</strong> Gris violeta atenuado para el contenedor y seudónimos anónimos de 2do grado.</li>
+  <li><span class="color-swatch" style="background: #9E98A8;"></span><strong>MutedAccent (<code>#9E98A8</code>):</strong> Gris perla apagado para los identificadores de hardware y antena NFC.</li>
+  <li><span class="color-swatch" style="background: #E4E1E9;"></span><strong>TextPrimary (<code>#E4E1E9</code>):</strong> Gris claro mate de alta legibilidad sin deslumbramiento.</li>
 </ul>
 
 <h2>4. Resumen de Requerimientos Cumplidos</h2>
@@ -346,7 +343,7 @@ El archivo <code>Color.kt</code> y <code>Theme.kt</code> definen el sistema crom
 </table>
 
 <div class="footer">
-  Documento Técnico de Entrega 1 · Proyecto RedSocialNFC · Portafolio de Actividades de Desarrollo Móvil
+  Documento Técnico de Entrega 1 · Proyecto Local (RedSocialNFC) · Portafolio de Actividades de Desarrollo Móvil
 </div>
 
 </body>

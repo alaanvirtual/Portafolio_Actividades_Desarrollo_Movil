@@ -79,7 +79,7 @@ fun PerfilScreen(
             TopAppBar(
                 title = {
                     Text(
-                        "Mi Identidad · Entrega 1",
+                        "Local · Mi Identidad",
                         fontWeight = FontWeight.Bold,
                         color = TextPrimary
                     )

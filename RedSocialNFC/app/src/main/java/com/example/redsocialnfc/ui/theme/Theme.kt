@@ -3,17 +3,19 @@ package com.example.redsocialnfc.ui.theme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 
-private val DigitalAlchemyColorScheme = darkColorScheme(
-    primary = NeonMagenta,
-    onPrimary = DarkBackground,
-    primaryContainer = SubtleViolet,
-    onPrimaryContainer = NeonMagentaLight,
-    secondary = ElectricViolet,
+// Esquema de colores para "Local": Morados y Grises sobrios (No luminosos)
+private val LocalColorScheme = darkColorScheme(
+    primary = MutedPurple,
+    onPrimary = Color.White,
+    primaryContainer = SubtleGrayPurple,
+    onPrimaryContainer = MutedPurpleLight,
+    secondary = MutedGray,
     onSecondary = TextPrimary,
     secondaryContainer = DarkSurfaceVariant,
-    onSecondaryContainer = NeonCyan,
-    tertiary = NeonCyan,
+    onSecondaryContainer = MutedAccent,
+    tertiary = MutedAccent,
     background = DarkBackground,
     onBackground = TextPrimary,
     surface = DarkSurface,
@@ -27,7 +29,7 @@ private val DigitalAlchemyColorScheme = darkColorScheme(
 @Composable
 fun RedSocialNFCTheme(content: @Composable () -> Unit) {
     MaterialTheme(
-        colorScheme = DigitalAlchemyColorScheme,
+        colorScheme = LocalColorScheme,
         typography = Typography,
         content = content
     )

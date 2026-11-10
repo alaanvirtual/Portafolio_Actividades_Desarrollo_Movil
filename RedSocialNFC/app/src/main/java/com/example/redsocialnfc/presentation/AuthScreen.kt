@@ -60,6 +60,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.redsocialnfc.data.Usuario
 import com.example.redsocialnfc.domain.AppDatabase
+import com.example.redsocialnfc.ui.theme.DarkBackground
 import com.example.redsocialnfc.ui.theme.DarkOutline
 import com.example.redsocialnfc.ui.theme.DarkSurface
 import com.example.redsocialnfc.ui.theme.DarkSurfaceVariant
@@ -111,9 +112,9 @@ fun AuthScreen(
             .background(
                 Brush.verticalGradient(
                     colors = listOf(
-                        Color(0xFF0B0813),
-                        Color(0xFF140F24),
-                        Color(0xFF0B0813)
+                        DarkBackground,
+                        Color(0xFF1C1A24),
+                        DarkBackground
                     )
                 )
             )
@@ -126,20 +127,20 @@ fun AuthScreen(
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Logotipo / Cabecera Digital Alchemy
+            // Logotipo / Cabecera de la aplicación Local
             Icon(
                 imageVector = Icons.Default.Security,
                 contentDescription = "Logo",
                 tint = NeonMagenta,
-                modifier = Modifier.size(56.dp)
+                modifier = Modifier.size(54.dp)
             )
 
             Spacer(Modifier.height(8.dp))
 
             Text(
-                text = "DIGITAL ALCHEMY",
+                text = "LOCAL",
                 style = MaterialTheme.typography.titleLarge.copy(
-                    letterSpacing = 3.sp,
+                    letterSpacing = 4.sp,
                     fontWeight = FontWeight.Black
                 ),
                 color = TextPrimary
@@ -148,7 +149,7 @@ fun AuthScreen(
             Text(
                 text = "Red Social de Proximidad Criptográfica",
                 style = MaterialTheme.typography.bodySmall,
-                color = NeonCyan
+                color = TextSecondary
             )
 
             Spacer(Modifier.height(28.dp))
