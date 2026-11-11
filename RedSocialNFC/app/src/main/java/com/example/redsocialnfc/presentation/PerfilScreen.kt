@@ -19,10 +19,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ExitToApp
-import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.Fingerprint
+import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Nfc
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Security
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -53,10 +53,10 @@ import com.example.redsocialnfc.ui.theme.DarkBackground
 import com.example.redsocialnfc.ui.theme.DarkOutline
 import com.example.redsocialnfc.ui.theme.DarkSurface
 import com.example.redsocialnfc.ui.theme.DarkSurfaceVariant
-import com.example.redsocialnfc.ui.theme.ElectricViolet
-import com.example.redsocialnfc.ui.theme.NeonCyan
-import com.example.redsocialnfc.ui.theme.NeonMagenta
-import com.example.redsocialnfc.ui.theme.SubtleViolet
+import com.example.redsocialnfc.ui.theme.MutedAccent
+import com.example.redsocialnfc.ui.theme.MutedGray
+import com.example.redsocialnfc.ui.theme.MutedPurple
+import com.example.redsocialnfc.ui.theme.SubtleGrayPurple
 import com.example.redsocialnfc.ui.theme.TextPrimary
 import com.example.redsocialnfc.ui.theme.TextSecondary
 import com.example.redsocialnfc.util.SessionManager
@@ -79,7 +79,7 @@ fun PerfilScreen(
             TopAppBar(
                 title = {
                     Text(
-                        "Local · Mi Identidad",
+                        "Mi Perfil",
                         fontWeight = FontWeight.Bold,
                         color = TextPrimary
                     )
@@ -92,7 +92,7 @@ fun PerfilScreen(
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ExitToApp,
                             contentDescription = "Cerrar sesión",
-                            tint = NeonMagenta
+                            tint = MutedPurple
                         )
                     }
                 },
@@ -109,14 +109,14 @@ fun PerfilScreen(
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Avatar con gradiente Digital Alchemy
+            // Avatar sobrio
             Box(
                 modifier = Modifier
                     .size(90.dp)
                     .clip(CircleShape)
                     .background(
                         Brush.radialGradient(
-                            colors = listOf(NeonMagenta, ElectricViolet, DarkSurface)
+                            colors = listOf(MutedPurple, MutedGray, DarkSurface)
                         )
                     ),
                 contentAlignment = Alignment.Center
@@ -129,21 +129,30 @@ fun PerfilScreen(
                 )
             }
 
-            Spacer(Modifier.height(12.dp))
+            Spacer(Modifier.height(10.dp))
+
+            Text(
+                text = realHandle,
+                style = MaterialTheme.typography.titleLarge.copy(
+                    fontWeight = FontWeight.Black,
+                    fontFamily = FontFamily.Monospace
+                ),
+                color = TextPrimary
+            )
 
             Text(
                 text = email,
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.bodySmall,
                 color = TextSecondary
             )
 
             Spacer(Modifier.height(20.dp))
 
-            // Tarjeta 1: RF-02 - Handle Real (1er Grado)
+            // Tarjeta 1: Usuario
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .border(1.dp, NeonMagenta, RoundedCornerShape(16.dp)),
+                    .border(1.dp, MutedPurple, RoundedCornerShape(16.dp)),
                 shape = RoundedCornerShape(16.dp),
                 colors = CardDefaults.cardColors(containerColor = DarkSurface)
             ) {
@@ -154,29 +163,29 @@ fun PerfilScreen(
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Text(
-                            text = "RF-02 · IDENTIDAD REAL",
+                            text = "USUARIO",
                             style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
-                            color = NeonMagenta
+                            color = MutedPurple
                         )
                         Surface(
                             shape = RoundedCornerShape(6.dp),
-                            color = NeonMagenta.copy(alpha = 0.2f)
+                            color = MutedPurple.copy(alpha = 0.2f)
                         ) {
                             Text(
-                                text = "1er Grado (NFC)",
+                                text = "Contacto Directo",
                                 style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
-                                color = NeonMagenta,
+                                color = MutedPurple,
                                 modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
                             )
                         }
                     }
 
-                    Spacer(Modifier.height(8.dp))
+                    Spacer(Modifier.height(6.dp))
 
                     Text(
                         text = realHandle,
-                        style = MaterialTheme.typography.titleLarge.copy(
-                            fontWeight = FontWeight.Black,
+                        style = MaterialTheme.typography.titleMedium.copy(
+                            fontWeight = FontWeight.Bold,
                             fontFamily = FontFamily.Monospace
                         ),
                         color = TextPrimary
@@ -184,7 +193,7 @@ fun PerfilScreen(
 
                     Spacer(Modifier.height(4.dp))
                     Text(
-                        text = "Visible únicamente para conexiones confirmadas en persona tras el handshake de la antena NFC.",
+                        text = "Nombre visible para tus contactos confirmados mediante proximidad.",
                         style = MaterialTheme.typography.bodySmall,
                         color = TextSecondary
                     )
@@ -193,13 +202,13 @@ fun PerfilScreen(
 
             Spacer(Modifier.height(14.dp))
 
-            // Tarjeta 2: RF-03 - Pseudónimo Anónimo (2do Grado)
+            // Tarjeta 2: Pseudónimo Anónimo
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .border(1.dp, ElectricViolet, RoundedCornerShape(16.dp)),
+                    .border(1.dp, MutedGray, RoundedCornerShape(16.dp)),
                 shape = RoundedCornerShape(16.dp),
-                colors = CardDefaults.cardColors(containerColor = SubtleViolet)
+                colors = CardDefaults.cardColors(containerColor = SubtleGrayPurple)
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     Row(
@@ -211,14 +220,14 @@ fun PerfilScreen(
                             Icon(
                                 imageVector = Icons.Default.VisibilityOff,
                                 contentDescription = null,
-                                tint = NeonCyan,
+                                tint = MutedAccent,
                                 modifier = Modifier.size(16.dp)
                             )
                             Spacer(Modifier.width(6.dp))
                             Text(
-                                text = "RF-03 · PSEUDÓNIMO ANÓNIMO",
+                                text = "PSEUDÓNIMO ANÓNIMO",
                                 style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
-                                color = NeonCyan
+                                color = MutedAccent
                             )
                         }
 
@@ -227,7 +236,7 @@ fun PerfilScreen(
                             color = DarkSurfaceVariant
                         ) {
                             Text(
-                                text = "2do Grado",
+                                text = "Círculo Extendido",
                                 style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
                                 color = TextSecondary,
                                 modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
@@ -235,20 +244,20 @@ fun PerfilScreen(
                         }
                     }
 
-                    Spacer(Modifier.height(8.dp))
+                    Spacer(Modifier.height(6.dp))
 
                     Text(
                         text = anonHandle,
-                        style = MaterialTheme.typography.titleLarge.copy(
-                            fontWeight = FontWeight.Black,
+                        style = MaterialTheme.typography.titleMedium.copy(
+                            fontWeight = FontWeight.Bold,
                             fontFamily = FontFamily.Monospace
                         ),
-                        color = NeonCyan
+                        color = MutedAccent
                     )
 
                     Spacer(Modifier.height(4.dp))
                     Text(
-                        text = "Valor inalterable autogenerado por el sistema. Protege la identidad real ante contactos no verificados.",
+                        text = "Identidad autogenerada inalterable para interactuar de forma anónima.",
                         style = MaterialTheme.typography.bodySmall,
                         color = TextSecondary
                     )
@@ -257,7 +266,7 @@ fun PerfilScreen(
 
             Spacer(Modifier.height(14.dp))
 
-            // Tarjeta 3: RF-04 - Identificador Criptográfico NFC
+            // Tarjeta 3: Identificador de Dispositivo
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -275,12 +284,12 @@ fun PerfilScreen(
                             Icon(
                                 imageVector = Icons.Default.Nfc,
                                 contentDescription = null,
-                                tint = NeonCyan,
+                                tint = MutedAccent,
                                 modifier = Modifier.size(18.dp)
                             )
                             Spacer(Modifier.width(6.dp))
                             Text(
-                                text = "RF-04 · IDENTIFICADOR NFC",
+                                text = "IDENTIFICADOR DEL DISPOSITIVO",
                                 style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
                                 color = TextPrimary
                             )
@@ -291,15 +300,15 @@ fun PerfilScreen(
                             color = DarkSurfaceVariant
                         ) {
                             Text(
-                                text = "Proceso de Fondo",
+                                text = "Hardware Activo",
                                 style = MaterialTheme.typography.labelSmall.copy(fontWeight = FontWeight.Bold),
-                                color = NeonCyan,
+                                color = MutedAccent,
                                 modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
                             )
                         }
                     }
 
-                    Spacer(Modifier.height(8.dp))
+                    Spacer(Modifier.height(6.dp))
 
                     Text(
                         text = nfcUuid,
@@ -312,37 +321,14 @@ fun PerfilScreen(
 
                     Spacer(Modifier.height(4.dp))
                     Text(
-                        text = "UUID criptográfico de hardware vinculado al dispositivo. Se intercambia por antena NFC en la Entrega Final.",
+                        text = "Código criptográfico único asignado a este teléfono para sincronizaciones.",
                         style = MaterialTheme.typography.bodySmall,
                         color = TextSecondary
                     )
                 }
             }
 
-            Spacer(Modifier.height(24.dp))
-
-            // Estado de cumplimiento de la Entrega 1
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(14.dp),
-                colors = CardDefaults.cardColors(containerColor = DarkSurfaceVariant)
-            ) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Text(
-                        text = "Requerimientos Completados (Entrega 1):",
-                        style = MaterialTheme.typography.titleSmall.copy(fontWeight = FontWeight.Bold),
-                        color = TextPrimary
-                    )
-                    Spacer(Modifier.height(8.dp))
-
-                    ItemCheck(texto = "RF-01: Autenticación (Email, Pass, Ojo visible)")
-                    ItemCheck(texto = "RF-02: Handle Real único con prefijo '@'")
-                    ItemCheck(texto = "RF-03: Identidad Anónima inalterable autogenerada")
-                    ItemCheck(texto = "RF-04: UUID de hardware NFC en segundo plano")
-                }
-            }
-
-            Spacer(Modifier.height(24.dp))
+            Spacer(Modifier.height(28.dp))
 
             OutlinedButton(
                 onClick = {
@@ -350,34 +336,13 @@ fun PerfilScreen(
                     onCerrarSesion()
                 },
                 modifier = Modifier.fillMaxWidth(),
-                colors = ButtonDefaults.outlinedButtonColors(contentColor = NeonMagenta),
-                border = androidx.compose.foundation.BorderStroke(1.dp, Brush.horizontalGradient(listOf(NeonMagenta, ElectricViolet)))
+                colors = ButtonDefaults.outlinedButtonColors(contentColor = MutedPurple),
+                border = androidx.compose.foundation.BorderStroke(1.dp, MutedPurple)
             ) {
                 Icon(Icons.AutoMirrored.Filled.ExitToApp, contentDescription = null)
                 Spacer(Modifier.width(8.dp))
                 Text("Cerrar Sesión")
             }
         }
-    }
-}
-
-@Composable
-private fun ItemCheck(texto: String) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-        modifier = Modifier.padding(vertical = 3.dp)
-    ) {
-        Icon(
-            imageVector = Icons.Default.CheckCircle,
-            contentDescription = null,
-            tint = NeonCyan,
-            modifier = Modifier.size(16.dp)
-        )
-        Spacer(Modifier.width(8.dp))
-        Text(
-            text = texto,
-            style = MaterialTheme.typography.bodySmall,
-            color = TextPrimary
-        )
     }
 }

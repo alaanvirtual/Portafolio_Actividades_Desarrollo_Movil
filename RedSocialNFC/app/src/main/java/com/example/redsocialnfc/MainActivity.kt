@@ -11,7 +11,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import com.example.redsocialnfc.presentation.AuthScreen
-import com.example.redsocialnfc.presentation.PerfilScreen
+import com.example.redsocialnfc.presentation.MainDashboard
 import com.example.redsocialnfc.ui.theme.RedSocialNFCTheme
 import com.example.redsocialnfc.util.SessionManager
 
@@ -34,7 +34,7 @@ fun MainApp() {
     var sesionActiva by remember { mutableStateOf(sessionManager.haySesionActiva()) }
 
     if (sesionActiva) {
-        PerfilScreen(
+        MainDashboard(
             onCerrarSesion = {
                 sesionActiva = false
             }

@@ -168,7 +168,7 @@ fun AuthScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
-                        text = if (esModoRegistro) "Crear Identidad" else "Iniciar Sesión",
+                        text = if (esModoRegistro) "Crear Cuenta" else "Iniciar Sesión",
                         style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
                         color = TextPrimary
                     )
@@ -237,18 +237,16 @@ fun AuthScreen(
                         Column(modifier = Modifier.fillMaxWidth()) {
                             Spacer(Modifier.height(12.dp))
 
-                            // RF-02: Handle Real (@handle) con prefixText
+                            // Handle de usuario (@handle) con prefixText
                             OutlinedTextField(
                                 value = realHandleInput,
                                 onValueChange = { input ->
-                                    // Previene espacios y caracteres no permitidos
                                     val filtrado = input.filter { it.isLetterOrDigit() || it == '_' }
                                     realHandleInput = filtrado
                                     mensajeError = null
                                 },
-                                label = { Text("Identidad Real") },
+                                label = { Text("Usuario") },
                                 prefix = {
-                                    // RF-02: Incorpora el @ fijo para prevenir formato incorrecto
                                     Text("@", color = NeonMagenta, fontWeight = FontWeight.Bold)
                                 },
                                 leadingIcon = {
@@ -256,7 +254,7 @@ fun AuthScreen(
                                 },
                                 singleLine = true,
                                 supportingText = {
-                                    Text("Visible tras el handshake NFC de 1er grado", color = TextSecondary)
+                                    Text("Nombre visible para tus contactos", color = TextSecondary)
                                 },
                                 colors = OutlinedTextFieldDefaults.colors(
                                     focusedBorderColor = NeonMagenta,
@@ -269,9 +267,9 @@ fun AuthScreen(
 
                             Spacer(Modifier.height(14.dp))
 
-                            // RF-03: Generación de Identidad Anónima (Inalterable - Solo Lectura)
+                            // Pseudónimo Anónimo (Solo Lectura)
                             Text(
-                                text = "Identidad de 2do Grado (Autogenerada):",
+                                text = "Pseudónimo anónimo asignado:",
                                 style = MaterialTheme.typography.labelSmall,
                                 color = TextSecondary
                             )
@@ -300,13 +298,12 @@ fun AuthScreen(
                                             color = NeonCyan
                                         )
                                         Text(
-                                            text = "Inalterable · Vista pública de 2do grado",
+                                            text = "Identidad protegida autogenerada",
                                             style = MaterialTheme.typography.labelSmall,
                                             color = TextSecondary
                                         )
                                     }
 
-                                    // Badge decorativo de Solo Lectura
                                     Surface(
                                         shape = RoundedCornerShape(6.dp),
                                         color = DarkSurfaceVariant
@@ -321,9 +318,8 @@ fun AuthScreen(
                                 }
                             }
 
-                            Spacer(Modifier.height(12.dp))
+                            Spacer(Modifier.height(10.dp))
 
-                            // RF-04: Aviso de asignación de hardware criptográfico NFC
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
                                 modifier = Modifier
@@ -334,11 +330,11 @@ fun AuthScreen(
                                     imageVector = Icons.Default.Nfc,
                                     contentDescription = null,
                                     tint = NeonCyan,
-                                    modifier = Modifier.size(18.dp)
+                                    modifier = Modifier.size(16.dp)
                                 )
                                 Spacer(Modifier.width(8.dp))
                                 Text(
-                                    text = "RF-04: UUID de antena NFC vinculado automáticamente en fondo.",
+                                    text = "Dispositivo vinculado de forma segura",
                                     style = MaterialTheme.typography.labelSmall,
                                     color = TextSecondary
                                 )
@@ -454,7 +450,7 @@ fun AuthScreen(
                             )
                         } else {
                             Text(
-                                text = if (esModoRegistro) "REGISTRAR IDENTIDAD" else "INICIAR SESIÓN",
+                                text = if (esModoRegistro) "REGISTRARSE" else "INICIAR SESIÓN",
                                 fontWeight = FontWeight.Bold,
                                 letterSpacing = 1.sp
                             )
