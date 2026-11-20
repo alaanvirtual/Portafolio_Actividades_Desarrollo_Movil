@@ -4,16 +4,19 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import com.example.redsocialnfc.data.Mensaje
+import com.example.redsocialnfc.data.MensajeDao
 import com.example.redsocialnfc.data.Publicacion
 import com.example.redsocialnfc.data.PublicacionDao
 import com.example.redsocialnfc.data.Usuario
 import com.example.redsocialnfc.data.UsuarioDao
 
-@Database(entities = [Usuario::class, Publicacion::class], version = 2, exportSchema = false)
+@Database(entities = [Usuario::class, Publicacion::class, Mensaje::class], version = 3, exportSchema = false)
 abstract class AppDatabase : RoomDatabase() {
 
     abstract fun usuarioDao(): UsuarioDao
     abstract fun publicacionDao(): PublicacionDao
+    abstract fun mensajeDao(): MensajeDao
 
     companion object {
         @Volatile

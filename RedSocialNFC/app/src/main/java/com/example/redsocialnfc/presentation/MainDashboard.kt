@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Chat
 import androidx.compose.material.icons.filled.DynamicFeed
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
@@ -57,6 +58,22 @@ fun MainDashboard(
                     selected = pestañaSeleccionada == 1,
                     onClick = { pestañaSeleccionada = 1 },
                     icon = {
+                        Icon(Icons.AutoMirrored.Filled.Chat, contentDescription = "Chat")
+                    },
+                    label = { Text("Chat") },
+                    colors = NavigationBarItemDefaults.colors(
+                        selectedIconColor = Color.White,
+                        selectedTextColor = TextPrimary,
+                        unselectedIconColor = TextSecondary,
+                        unselectedTextColor = TextSecondary,
+                        indicatorColor = MutedPurple
+                    )
+                )
+
+                NavigationBarItem(
+                    selected = pestañaSeleccionada == 2,
+                    onClick = { pestañaSeleccionada = 2 },
+                    icon = {
                         Icon(Icons.Default.Person, contentDescription = "Perfil")
                     },
                     label = { Text("Perfil") },
@@ -70,8 +87,8 @@ fun MainDashboard(
                 )
 
                 NavigationBarItem(
-                    selected = pestañaSeleccionada == 2,
-                    onClick = { pestañaSeleccionada = 2 },
+                    selected = pestañaSeleccionada == 3,
+                    onClick = { pestañaSeleccionada = 3 },
                     icon = {
                         Icon(Icons.Default.Settings, contentDescription = "Ajustes")
                     },
@@ -95,8 +112,9 @@ fun MainDashboard(
         ) {
             when (pestañaSeleccionada) {
                 0 -> FeedScreen()
-                1 -> PerfilScreen(onCerrarSesion = onCerrarSesion)
-                2 -> AjustesScreen()
+                1 -> ChatScreen()
+                2 -> PerfilScreen(onCerrarSesion = onCerrarSesion)
+                3 -> AjustesScreen()
             }
         }
     }
