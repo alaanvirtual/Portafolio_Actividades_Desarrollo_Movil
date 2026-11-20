@@ -7,10 +7,8 @@ import androidx.room.PrimaryKey
 data class Mensaje(
     @PrimaryKey(autoGenerate = true)
     val id: Int = 0,
-    val remitenteId: Int,
     val remitenteHandle: String,
-    val remitenteAnonimo: String,
+    val destinatarioHandle: String,
     val texto: String,
-    val esAmigoDirecto: Boolean = true,
     val timestamp: Long = System.currentTimeMillis()
 )
