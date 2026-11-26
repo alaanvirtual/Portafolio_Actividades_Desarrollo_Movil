@@ -123,123 +123,130 @@ fun TareasContenido(
                 }
 
                 is EstadoCarga.Exito -> {
-                    Column(
+                    LazyColumn(
                         modifier = Modifier.fillMaxSize(),
                         verticalArrangement = Arrangement.spacedBy(12.dp)
                     ) {
                         // Reto (Entregable 1): Resumen de Estadísticas Derivado
-                        Card(
-                            modifier = Modifier.fillMaxWidth(),
-                            colors = CardDefaults.cardColors(
-                                containerColor = MaterialTheme.colorScheme.secondaryContainer
-                            )
-                        ) {
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(12.dp),
-                                horizontalArrangement = Arrangement.SpaceAround,
-                                verticalAlignment = Alignment.CenterVertically
+                        item {
+                            Card(
+                                modifier = Modifier.fillMaxWidth(),
+                                colors = CardDefaults.cardColors(
+                                    containerColor = MaterialTheme.colorScheme.secondaryContainer
+                                )
                             ) {
-                                Text(
-                                    text = "Total: ${uiState.totalTareas}",
-                                    fontWeight = FontWeight.Bold,
-                                    style = MaterialTheme.typography.bodyMedium
-                                )
-                                Text(
-                                    text = "Pendientes: ${uiState.totalPendientes}",
-                                    fontWeight = FontWeight.Bold,
-                                    color = MaterialTheme.colorScheme.error,
-                                    style = MaterialTheme.typography.bodyMedium
-                                )
-                                Text(
-                                    text = "Completadas: ${uiState.totalCompletadas}",
-                                    fontWeight = FontWeight.Bold,
-                                    color = MaterialTheme.colorScheme.primary,
-                                    style = MaterialTheme.typography.bodyMedium
-                                )
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(12.dp),
+                                    horizontalArrangement = Arrangement.SpaceAround,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Text(
+                                        text = "Total: ${uiState.totalTareas}",
+                                        fontWeight = FontWeight.Bold,
+                                        style = MaterialTheme.typography.bodyMedium
+                                    )
+                                    Text(
+                                        text = "Pendientes: ${uiState.totalPendientes}",
+                                        fontWeight = FontWeight.Bold,
+                                        color = MaterialTheme.colorScheme.error,
+                                        style = MaterialTheme.typography.bodyMedium
+                                    )
+                                    Text(
+                                        text = "Completadas: ${uiState.totalCompletadas}",
+                                        fontWeight = FontWeight.Bold,
+                                        color = MaterialTheme.colorScheme.primary,
+                                        style = MaterialTheme.typography.bodyMedium
+                                    )
+                                }
                             }
                         }
 
                         // Fila de Entrada de texto para nueva tarea
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            OutlinedTextField(
-                                value = uiState.textoNuevaTarea,
-                                onValueChange = onTextoCambio,
-                                label = { Text("Nueva tarea") },
-                                singleLine = true,
-                                modifier = Modifier.weight(1f)
-                            )
-                            FilledIconButton(onClick = onAgregarTarea) {
-                                Icon(
-                                    imageVector = Icons.Default.Add,
-                                    contentDescription = "Agregar tarea"
+                        item {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                OutlinedTextField(
+                                    value = uiState.textoNuevaTarea,
+                                    onValueChange = onTextoCambio,
+                                    label = { Text("Nueva tarea") },
+                                    singleLine = true,
+                                    modifier = Modifier.weight(1f)
                                 )
+                                FilledIconButton(onClick = onAgregarTarea) {
+                                    Icon(
+                                        imageVector = Icons.Default.Add,
+                                        contentDescription = "Agregar tarea"
+                                    )
+                                }
                             }
                         }
 
                         // Fila de Filtros
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.spacedBy(8.dp),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            FiltroTarea.entries.forEach { filtro ->
-                                FilterChip(
-                                    selected = uiState.filtroActivo == filtro,
-                                    onClick = { onCambiarFiltro(filtro) },
-                                    label = { Text(filtro.etiqueta) }
-                                )
+                        item {
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                FiltroTarea.entries.forEach { filtro ->
+                                    FilterChip(
+                                        selected = uiState.filtroActivo == filtro,
+                                        onClick = { onCambiarFiltro(filtro) },
+                                        label = { Text(filtro.etiqueta) }
+                                    )
+                                }
                             }
                         }
 
                         // Reto (Entregable 2): Botón "Limpiar completadas"
                         if (uiState.totalCompletadas > 0) {
-                            OutlinedButton(
-                                onClick = onLimpiarCompletadas,
-                                modifier = Modifier.fillMaxWidth()
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.Delete,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(18.dp)
-                                )
-                                Spacer(modifier = Modifier.width(8.dp))
-                                Text("Limpiar tareas completadas (${uiState.totalCompletadas})")
+                            item {
+                                OutlinedButton(
+                                    onClick = onLimpiarCompletadas,
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Delete,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(18.dp)
+                                    )
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                    Text("Limpiar tareas completadas (${uiState.totalCompletadas})")
+                                }
                             }
                         }
 
                         // Lista o mensaje vacío
                         if (uiState.tareasFiltradas.isEmpty()) {
-                            Box(
-                                modifier = Modifier.fillMaxSize(),
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Text(
-                                    text = "No hay tareas en esta categoría.",
-                                    style = MaterialTheme.typography.bodyMedium,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
-                            }
-                        } else {
-                            LazyColumn(
-                                verticalArrangement = Arrangement.spacedBy(8.dp),
-                                modifier = Modifier.fillMaxSize()
-                            ) {
-                                items(
-                                    items = uiState.tareasFiltradas,
-                                    key = { it.id }
-                                ) { tarea ->
-                                    TareaItem(
-                                        tarea = tarea,
-                                        onAlternar = { onAlternarCompletada(tarea.id) },
-                                        onEliminar = { onEliminarTarea(tarea.id) }
+                            item {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(vertical = 32.dp),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Text(
+                                        text = "No hay tareas en esta categoría.",
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant
                                     )
                                 }
+                            }
+                        } else {
+                            items(
+                                items = uiState.tareasFiltradas,
+                                key = { it.id }
+                            ) { tarea ->
+                                TareaItem(
+                                    tarea = tarea,
+                                    onAlternar = { onAlternarCompletada(tarea.id) },
+                                    onEliminar = { onEliminarTarea(tarea.id) }
+                                )
                             }
                         }
                     }
