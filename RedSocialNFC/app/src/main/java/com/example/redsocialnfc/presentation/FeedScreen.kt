@@ -110,6 +110,7 @@ import com.example.redsocialnfc.data.MediaTipoPost
 import com.example.redsocialnfc.data.Publicacion
 import com.example.redsocialnfc.data.VisibilidadMuro
 import com.example.redsocialnfc.domain.AppDatabase
+import com.example.redsocialnfc.network.LocalP2pSyncManager
 import com.example.redsocialnfc.presentation.components.AvatarUsuario
 import com.example.redsocialnfc.presentation.components.BadgeAudienciaPost
 import com.example.redsocialnfc.presentation.components.FotoPreviewCard
@@ -575,28 +576,28 @@ fun FeedScreen() {
                                 if (it.esAmigoDirecto) "${it.autorNombre.ifBlank { it.autorHandle.removePrefix("@") }} (${it.autorHandle})"
                                 else "Círculo Anónimo (${it.autorAnonimo})"
                             }
-                            dao.insertar(
-                                Publicacion(
-                                    autorId = miUserId,
-                                    autorNombre = miNombre,
-                                    autorHandle = miHandle,
-                                    autorAvatarUri = miAvatar,
-                                    autorAnonimo = miAnonHandle,
-                                    contenido = contenido,
-                                    categoria = categoria,
-                                    etiquetaLugar = lugar?.takeIf { it.isNotBlank() },
-                                    esAmigoDirecto = !publicarAnonimo,
-                                    mediaTipo = mediaTipo,
-                                    mediaUri = mediaUri,
-                                    encuestaOpciones = encOpciones,
-                                    encuestaVotos = encVotos,
-                                    citadoAutor = autorCitaLabel,
-                                    citadoContenido = citando?.contenido?.takeIf { it.isNotBlank() }
-                                        ?: citando?.let { if (it.mediaTipo != MediaTipoPost.NINGUNO) "[Publicación con multimedia]" else null },
-                                    audiencia = audiencia,
-                                    audienciaPermitidos = audienciaPermitidos
-                                )
+                            val nuevaPub = Publicacion(
+                                autorId = miUserId,
+                                autorNombre = miNombre,
+                                autorHandle = miHandle,
+                                autorAvatarUri = miAvatar,
+                                autorAnonimo = miAnonHandle,
+                                contenido = contenido,
+                                categoria = categoria,
+                                etiquetaLugar = lugar?.takeIf { it.isNotBlank() },
+                                esAmigoDirecto = !publicarAnonimo,
+                                mediaTipo = mediaTipo,
+                                mediaUri = mediaUri,
+                                encuestaOpciones = encOpciones,
+                                encuestaVotos = encVotos,
+                                citadoAutor = autorCitaLabel,
+                                citadoContenido = citando?.contenido?.takeIf { it.isNotBlank() }
+                                    ?: citando?.let { if (it.mediaTipo != MediaTipoPost.NINGUNO) "[Publicación con multimedia]" else null },
+                                audiencia = audiencia,
+                                audienciaPermitidos = audienciaPermitidos
                             )
+                            dao.insertar(nuevaPub)
+                            LocalP2pSyncManager.difundirPublicacion(nuevaPub)
                             if (listaFiltrada.isNotEmpty()) {
                                 feedListState.animateScrollToItem(0)
                             }

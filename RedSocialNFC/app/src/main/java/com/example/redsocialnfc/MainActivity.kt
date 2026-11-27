@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -20,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import com.example.redsocialnfc.domain.AppDatabase
+import com.example.redsocialnfc.network.LocalP2pSyncManager
 import com.example.redsocialnfc.presentation.AuthScreen
 import com.example.redsocialnfc.presentation.MainDashboard
 import com.example.redsocialnfc.ui.theme.DarkBackground
@@ -87,8 +89,15 @@ fun MainApp() {
             CircularProgressIndicator(color = MutedPurple)
         }
     } else if (sesionActiva) {
+        DisposableEffect(Unit) {
+            LocalP2pSyncManager.iniciar(context)
+            onDispose {
+                LocalP2pSyncManager.detener()
+            }
+        }
         MainDashboard(
             onCerrarSesion = {
+                LocalP2pSyncManager.detener()
                 sesionActiva = false
             }
         )

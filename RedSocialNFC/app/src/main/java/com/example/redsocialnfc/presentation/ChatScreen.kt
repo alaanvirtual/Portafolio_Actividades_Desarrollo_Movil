@@ -100,6 +100,7 @@ import com.example.redsocialnfc.data.Amigo
 import com.example.redsocialnfc.data.MediaTipoChat
 import com.example.redsocialnfc.data.Mensaje
 import com.example.redsocialnfc.domain.AppDatabase
+import com.example.redsocialnfc.network.LocalP2pSyncManager
 import com.example.redsocialnfc.presentation.components.AudioBubblePlayer
 import com.example.redsocialnfc.presentation.components.DialogNfcHandshake
 import com.example.redsocialnfc.presentation.components.DocumentoAttachmentCard
@@ -209,6 +210,7 @@ fun ChatScreen(
                 Column(modifier = Modifier.background(DarkSurface)) {
                     TopAppBar(
                         title = {
+                            val peersP2p by LocalP2pSyncManager.peersConectados.collectAsState()
                             Column {
                                 Text(
                                     "Chats",
@@ -216,7 +218,10 @@ fun ChatScreen(
                                     color = TextPrimary
                                 )
                                 Text(
-                                    if (amigos.isEmpty()) "Sin contactos vinculados" else "${amigos.size} contacto(s)",
+                                    text = buildString {
+                                        append(if (amigos.isEmpty()) "Sin contactos vinculados" else "${amigos.size} contacto(s)")
+                                        if (peersP2p.isNotEmpty()) append(" · ${peersP2p.size} cercano(s) Wi-Fi")
+                                    },
                                     style = MaterialTheme.typography.labelSmall,
                                     color = TextSecondary
                                 )
@@ -928,14 +933,14 @@ private fun ConversacionPrivadaView(
                                     textoMensaje = ""
                                     mostrarPanelAdjuntos = false
                                     scope.launch {
-                                        mensajeDao.insertar(
-                                            Mensaje(
-                                                remitenteHandle = miHandle,
-                                                destinatarioHandle = amigo.handle,
-                                                texto = textoAEnviar,
-                                                mediaTipo = MediaTipoChat.TEXTO
-                                            )
+                                        val msg = Mensaje(
+                                            remitenteHandle = miHandle,
+                                            destinatarioHandle = amigo.handle,
+                                            texto = textoAEnviar,
+                                            mediaTipo = MediaTipoChat.TEXTO
                                         )
+                                        mensajeDao.insertar(msg)
+                                        LocalP2pSyncManager.enviarMensaje(msg)
                                     }
                                 },
                                 modifier = Modifier

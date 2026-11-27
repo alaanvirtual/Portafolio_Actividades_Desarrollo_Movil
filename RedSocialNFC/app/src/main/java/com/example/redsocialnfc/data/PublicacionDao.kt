@@ -34,6 +34,9 @@ interface PublicacionDao {
     @Query("SELECT COUNT(*) FROM publicaciones")
     suspend fun contarTotal(): Int
 
+    @Query("SELECT COUNT(*) FROM publicaciones WHERE autorHandle = :autorHandle AND timestamp = :timestamp")
+    suspend fun existePublicacion(autorHandle: String, timestamp: Long): Int
+
     @Query("UPDATE publicaciones SET autorNombre = :displayName, autorAvatarUri = :avatarUri WHERE autorId = :autorId")
     suspend fun actualizarAutorEnPublicaciones(autorId: Int, displayName: String, avatarUri: String?)
 

@@ -71,6 +71,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.redsocialnfc.data.Amigo
 import com.example.redsocialnfc.domain.AppDatabase
+import com.example.redsocialnfc.network.LocalP2pSyncManager
 import com.example.redsocialnfc.nfc.NfcEvent
 import com.example.redsocialnfc.nfc.NfcHelper
 import com.example.redsocialnfc.nfc.NfcProtocol
@@ -132,6 +133,7 @@ fun DialogNfcHandshake(
             NfcHelper.enableReaderMode(activity, scope) { nuevoAmigo ->
                 scope.launch {
                     db.amigoDao().insertar(nuevoAmigo)
+                    LocalP2pSyncManager.enviarHandshakeAmigo(nuevoAmigo.handle)
                     amigoDetectado = nuevoAmigo
                     mensajeEstado = "¡Conexión establecida con @${nuevoAmigo.handle.removePrefix("@")}!"
                     onAmigoVinculado(nuevoAmigo)
@@ -418,6 +420,7 @@ fun DialogNfcHandshake(
                         onSimularContacto = { mockAmigo ->
                             scope.launch {
                                 db.amigoDao().insertar(mockAmigo)
+                                LocalP2pSyncManager.enviarHandshakeAmigo(mockAmigo.handle)
                                 NfcHelper.vibrarConfirmacion(context)
                                 amigoDetectado = mockAmigo
                                 onAmigoVinculado(mockAmigo)

@@ -47,4 +47,7 @@ interface MensajeDao {
 
     @Query("SELECT COUNT(*) FROM mensajes")
     suspend fun contarTotal(): Int
+
+    @Query("SELECT COUNT(*) FROM mensajes WHERE remitenteHandle = :remitenteHandle AND timestamp = :timestamp")
+    suspend fun existeMensaje(remitenteHandle: String, timestamp: Long): Int
 }
