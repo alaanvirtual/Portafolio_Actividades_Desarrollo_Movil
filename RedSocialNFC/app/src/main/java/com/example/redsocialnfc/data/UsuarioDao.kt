@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface UsuarioDao {
@@ -19,4 +20,16 @@ interface UsuarioDao {
 
     @Query("SELECT * FROM usuarios WHERE id = :id LIMIT 1")
     suspend fun obtenerPorId(id: Int): Usuario?
+
+    @Query("SELECT * FROM usuarios WHERE id = :id LIMIT 1")
+    fun observarPorId(id: Int): Flow<Usuario?>
+
+    @Query("UPDATE usuarios SET displayName = :displayName, bio = :bio, avatarUri = :avatarUri WHERE id = :userId")
+    suspend fun actualizarPerfil(userId: Int, displayName: String, bio: String, avatarUri: String?)
+
+    @Query("UPDATE usuarios SET passwordHash = :newPasswordHash WHERE id = :userId")
+    suspend fun actualizarPassword(userId: Int, newPasswordHash: String)
+
+    @Query("DELETE FROM usuarios WHERE id = :userId")
+    suspend fun eliminarPorId(userId: Int)
 }

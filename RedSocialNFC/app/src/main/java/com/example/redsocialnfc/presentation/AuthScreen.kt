@@ -11,14 +11,18 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Badge
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Nfc
@@ -48,11 +52,14 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusDirection
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.VisualTransformation
@@ -78,27 +85,24 @@ fun AuthScreen(
     onLoginExitoso: () -> Unit
 ) {
     val context = LocalContext.current
+    val focusManager = LocalFocusManager.current
     val dao = remember { AppDatabase.getDatabase(context).usuarioDao() }
     val sessionManager = remember { SessionManager(context) }
     val scope = rememberCoroutineScope()
 
     var esModoRegistro by remember { mutableStateOf(false) }
 
-    // RF-01: Estado de formulario (Email y Contraseña)
     var email by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
-    var passwordVisible by remember { mutableStateOf(false) } // RF-01: Conmutador de visibilidad
+    var passwordVisible by remember { mutableStateOf(false) }
 
-    // RF-02: Handle Real (@handle)
+    var displayNameInput by remember { mutableStateOf("") }
     var realHandleInput by remember { mutableStateOf("") }
-
-    // RF-03: Identidad anónima autogenerada inalterable
     var anonHandleGenerado by remember { mutableStateOf(SessionManager.generarIdentidadAnonima()) }
 
     var mensajeError by remember { mutableStateOf<String?>(null) }
     var cargando by remember { mutableStateOf(false) }
 
-    // Regenerar identidad anónima si cambia a modo registro
     LaunchedEffect(esModoRegistro) {
         if (esModoRegistro) {
             anonHandleGenerado = SessionManager.generarIdentidadAnonima()
@@ -118,7 +122,9 @@ fun AuthScreen(
                     )
                 )
             )
-            .padding(24.dp),
+            .systemBarsPadding()
+            .imePadding()
+            .padding(horizontal = 24.dp, vertical = 16.dp),
         contentAlignment = Alignment.Center
     ) {
         Column(
@@ -127,7 +133,6 @@ fun AuthScreen(
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Logotipo / Cabecera de la aplicación Local
             Icon(
                 imageVector = Icons.Default.Security,
                 contentDescription = "Logo",
@@ -152,9 +157,8 @@ fun AuthScreen(
                 color = TextSecondary
             )
 
-            Spacer(Modifier.height(28.dp))
+            Spacer(Modifier.height(24.dp))
 
-            // Tarjeta principal del formulario
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(20.dp),
@@ -175,7 +179,6 @@ fun AuthScreen(
 
                     Spacer(Modifier.height(16.dp))
 
-                    // RF-01: Campo de Email con OutlinedTextField
                     OutlinedTextField(
                         value = email,
                         onValueChange = {
@@ -187,7 +190,13 @@ fun AuthScreen(
                             Icon(Icons.Default.Email, contentDescription = null, tint = NeonMagenta)
                         },
                         singleLine = true,
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Email,
+                            imeAction = ImeAction.Next
+                        ),
+                        keyboardActions = KeyboardActions(
+                            onNext = { focusManager.moveFocus(FocusDirection.Down) }
+                        ),
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedBorderColor = NeonMagenta,
                             unfocusedBorderColor = DarkOutline,
@@ -199,7 +208,6 @@ fun AuthScreen(
 
                     Spacer(Modifier.height(12.dp))
 
-                    // RF-01: Campo de Contraseña con TrailingIcon (ojo conmutador)
                     OutlinedTextField(
                         value = password,
                         onValueChange = {
@@ -211,7 +219,6 @@ fun AuthScreen(
                             Icon(Icons.Default.Lock, contentDescription = null, tint = NeonMagenta)
                         },
                         trailingIcon = {
-                            // RF-01: El ícono conmutador de visibilidad previene errores de escritura
                             IconButton(onClick = { passwordVisible = !passwordVisible }) {
                                 Icon(
                                     imageVector = if (passwordVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
@@ -222,7 +229,14 @@ fun AuthScreen(
                         },
                         visualTransformation = if (passwordVisible) VisualTransformation.None else PasswordVisualTransformation(),
                         singleLine = true,
-                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Password,
+                            imeAction = if (esModoRegistro) ImeAction.Next else ImeAction.Done
+                        ),
+                        keyboardActions = KeyboardActions(
+                            onNext = { focusManager.moveFocus(FocusDirection.Down) },
+                            onDone = { focusManager.clearFocus() }
+                        ),
                         colors = OutlinedTextFieldDefaults.colors(
                             focusedBorderColor = NeonMagenta,
                             unfocusedBorderColor = DarkOutline,
@@ -232,12 +246,38 @@ fun AuthScreen(
                         modifier = Modifier.fillMaxWidth()
                     )
 
-                    // Campos adicionales solo en REGISTRO (RF-02 y RF-03)
                     AnimatedVisibility(visible = esModoRegistro) {
                         Column(modifier = Modifier.fillMaxWidth()) {
                             Spacer(Modifier.height(12.dp))
 
-                            // Handle de usuario (@handle) con prefixText
+                            OutlinedTextField(
+                                value = displayNameInput,
+                                onValueChange = {
+                                    if (it.length <= 30) {
+                                        displayNameInput = it
+                                        mensajeError = null
+                                    }
+                                },
+                                label = { Text("Nombre para mostrar") },
+                                leadingIcon = {
+                                    Icon(Icons.Default.Badge, contentDescription = null, tint = NeonMagenta)
+                                },
+                                singleLine = true,
+                                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                                keyboardActions = KeyboardActions(
+                                    onNext = { focusManager.moveFocus(FocusDirection.Down) }
+                                ),
+                                colors = OutlinedTextFieldDefaults.colors(
+                                    focusedBorderColor = NeonMagenta,
+                                    unfocusedBorderColor = DarkOutline,
+                                    focusedTextColor = TextPrimary,
+                                    unfocusedTextColor = TextPrimary
+                                ),
+                                modifier = Modifier.fillMaxWidth()
+                            )
+
+                            Spacer(Modifier.height(12.dp))
+
                             OutlinedTextField(
                                 value = realHandleInput,
                                 onValueChange = { input ->
@@ -253,6 +293,10 @@ fun AuthScreen(
                                     Icon(Icons.Default.Person, contentDescription = null, tint = NeonMagenta)
                                 },
                                 singleLine = true,
+                                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                                keyboardActions = KeyboardActions(
+                                    onDone = { focusManager.clearFocus() }
+                                ),
                                 supportingText = {
                                     Text("Nombre visible para tus contactos", color = TextSecondary)
                                 },
@@ -267,7 +311,6 @@ fun AuthScreen(
 
                             Spacer(Modifier.height(14.dp))
 
-                            // Pseudónimo Anónimo (Solo Lectura)
                             Text(
                                 text = "Pseudónimo anónimo asignado:",
                                 style = MaterialTheme.typography.labelSmall,
@@ -285,8 +328,7 @@ fun AuthScreen(
                             ) {
                                 Row(
                                     verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.SpaceBetween,
-                                    modifier = Modifier.background(Color.Transparent)
+                                    horizontalArrangement = Arrangement.SpaceBetween
                                 ) {
                                     Column {
                                         Text(
@@ -342,7 +384,6 @@ fun AuthScreen(
                         }
                     }
 
-                    // Mensaje de Error
                     mensajeError?.let { err ->
                         Spacer(Modifier.height(12.dp))
                         Text(
@@ -354,7 +395,6 @@ fun AuthScreen(
 
                     Spacer(Modifier.height(20.dp))
 
-                    // Botón de Acción (Login / Registro)
                     Button(
                         onClick = {
                             if (email.isBlank() || password.isBlank()) {
@@ -366,13 +406,18 @@ fun AuthScreen(
                             scope.launch {
                                 try {
                                     if (esModoRegistro) {
+                                        if (!email.contains("@") || !email.contains(".")) {
+                                            mensajeError = "Ingresa un correo electrónico válido"
+                                            cargando = false
+                                            return@launch
+                                        }
+
                                         if (realHandleInput.isBlank()) {
                                             mensajeError = "Debes ingresar tu nombre de usuario (@handle)"
                                             cargando = false
                                             return@launch
                                         }
 
-                                        // Validar que no exista el correo o handle
                                         val existenteEmail = dao.obtenerPorEmail(email)
                                         if (existenteEmail != null) {
                                             mensajeError = "El correo ya está registrado"
@@ -388,13 +433,15 @@ fun AuthScreen(
                                             return@launch
                                         }
 
-                                        // RF-04: Obtener o generar UUID criptográfico de hardware
                                         val nfcUuid = sessionManager.obtenerOGenerarDeviceNfcUuid()
+                                        val nombreFinal = displayNameInput.trim().ifBlank { realHandleInput }
 
                                         val nuevoUsuario = Usuario(
                                             email = email,
-                                            passwordHash = password, // Demo local
+                                            passwordHash = SessionManager.hashPassword(password),
                                             realHandle = handleCompleto,
+                                            displayName = nombreFinal,
+                                            bio = "Usando Local con privacidad NFC",
                                             anonHandle = anonHandleGenerado,
                                             nfcUuid = nfcUuid
                                         )
@@ -404,14 +451,17 @@ fun AuthScreen(
                                             userId = idGenerado.toInt(),
                                             email = email,
                                             realHandle = handleCompleto,
-                                            anonHandle = anonHandleGenerado
+                                            displayName = nombreFinal,
+                                            anonHandle = anonHandleGenerado,
+                                            bio = nuevoUsuario.bio,
+                                            avatarUri = null,
+                                            nfcUuid = nfcUuid
                                         )
                                         cargando = false
                                         onLoginExitoso()
                                     } else {
-                                        // Modo Login (RF-01)
                                         val user = dao.obtenerPorEmail(email)
-                                        if (user == null || user.passwordHash != password) {
+                                        if (user == null || !SessionManager.verificarPassword(password, user.passwordHash)) {
                                             mensajeError = "Correo o contraseña incorrectos"
                                             cargando = false
                                             return@launch
@@ -421,7 +471,11 @@ fun AuthScreen(
                                             userId = user.id,
                                             email = user.email,
                                             realHandle = user.realHandle,
-                                            anonHandle = user.anonHandle
+                                            displayName = user.displayName,
+                                            anonHandle = user.anonHandle,
+                                            bio = user.bio,
+                                            avatarUri = user.avatarUri,
+                                            nfcUuid = user.nfcUuid
                                         )
                                         cargando = false
                                         onLoginExitoso()
@@ -459,7 +513,6 @@ fun AuthScreen(
 
                     Spacer(Modifier.height(10.dp))
 
-                    // Conmutar entre Login y Registro
                     TextButton(onClick = { esModoRegistro = !esModoRegistro }) {
                         Text(
                             text = if (esModoRegistro) "¿Ya tienes cuenta? Inicia sesión" else "¿No tienes cuenta? Regístrate aquí",

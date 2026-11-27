@@ -49,6 +49,9 @@ dependencies {
     // Íconos extendidos de Material
     implementation("androidx.compose.material:material-icons-extended")
 
+    // Coil para carga asíncrona de imágenes y avatares
+    implementation("io.coil-kt:coil-compose:2.7.0")
+
     // Room para persistencia local
     val room_version = "2.8.4"
     implementation("androidx.room:room-runtime:$room_version")
