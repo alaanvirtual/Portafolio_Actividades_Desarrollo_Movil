@@ -14,6 +14,7 @@
 3. [Funcionalidad Completa de la Aplicación](#3-funcionalidad-completa-de-la-aplicación)
 4. [Requerimientos Funcionales y No Funcionales](#4-requerimientos-funcionales-y-no-funcionales)
 5. [Evidencia de Verificación y Pruebas Unitarias](#5-evidencia-de-verificación-y-pruebas-unitarias)
+6. [Preguntas del Asesor a los Alumnos (Defensa Técnica)](#6-preguntas-del-asesor-a-los-alumnos-defensa-técnica)
 
 ---
 
@@ -37,7 +38,7 @@ Desarrollar una aplicación Android robusta con interfaz declarativa en Jetpack 
 2. Diseñar un esquema relacional normalizado en Room (`version = 9`) con migraciones no destructivas para preservar información de usuarios existentes.
 3. Proveer un muro social enriquecido con categorías creadas por usuarios, selector de audiencia al crear, encuestas, citas, fijado, reacciones y captura multimedia segura con cámara, galería y video.
 4. Integrar mensajería directa multimedial (texto, notas de voz AAC/MPEG-4, fotos, video y documentos) con conteo reactivo de mensajes no leídos.
-5. Mantener preparada la capa de identidad física mediante permiso NFC e identificador único UUID por dispositivo (`nfcUuid`).
+5. Integrar comunicación física de proximidad mediante **NFC real** utilizando **Host-based Card Emulation (HCE)** (`HostApduService`) y **Reader Mode** (`NfcAdapter.enableReaderMode`) con protocolo ISO 7816-4.
 
 ### 1.3 Stack Tecnológico Verificado
 Extraído directamente de [gradle/libs.versions.toml](../gradle/libs.versions.toml) y [app/build.gradle.kts](../app/build.gradle.kts):
@@ -439,13 +440,36 @@ flowchart LR
 | **RNF-05** | **Usabilidad y Accesibilidad Visual** | Paleta oscura mate (`#141318`, `#1C1A22`, `#7E639B`, `#E4E1E9`), `imePadding` / scroll en diálogos ante teclado virtual y 4 pestañas principales. | `Color.kt`, `MainDashboard.kt`, `FeedScreen.kt` |
 | **RNF-06** | **Compatibilidad y Portabilidad** | Soporte desde `minSdk = 24` (Android 7.0) hasta `targetSdk = 37`, con `nfc` y `camera` declarados `required="false"`. | `app/build.gradle.kts`, `AndroidManifest.xml` |
 | **RNF-07** | **Mantenibilidad y Modularidad** | Separación por capas (`data`, `domain`, `presentation`, `components`, `util`, `ui/theme`) con componentes reutilizables. | Estructura `app/src/main/java/...` |
-| **RNF-08** | **Confiabilidad y Verificación** | Pruebas unitarias JUnit 4 cubriendo hashing, pseudónimo, formateo media, encuestas y visibilidad de muro (`5/5` OK). | [MediaAndSessionTest.kt](../app/src/test/java/com/example/redsocialnfc/MediaAndSessionTest.kt) |
-| **RNF-09** | **Extensibilidad Hardware (NFC)** | Permiso `NFC` declarado y `nfcUuid` persistido en `Usuario` y `Amigo`, listo para enlazar `NfcAdapter` / NDEF. | `AndroidManifest.xml`, `Usuario.kt`, `Amigo.kt` |
+| **RNF-08** | **Confiabilidad y Verificación** | Pruebas unitarias JUnit 4 cubriendo hashing, pseudónimo, formateo media, encuestas, visibilidad de muro y protocolo NFC APDU/JSON (`7/7` OK). | [MediaAndSessionTest.kt](../app/src/test/java/com/example/redsocialnfc/MediaAndSessionTest.kt) |
+| **RNF-09** | **Integración Hardware (NFC HCE + ReaderMode)** | Servicio `NfcHandshakeService` (`HostApduService`), AID `F0010203040506`, lectura `IsoDep`/`Ndef`, vibración háptica y simulador para emuladores. | `NfcHandshakeService.kt`, `NfcHelper.kt`, `apduservice.xml` |
 
 ---
 
 ## 5. Evidencia de Verificación y Pruebas Unitarias
 
 - **Compilación y Build:** `gradlew.bat testDebugUnitTest assembleDebug --no-daemon` → **`BUILD SUCCESSFUL`**.
-- **Suite Unitaria ([MediaAndSessionTest.kt](../app/src/test/java/com/example/redsocialnfc/MediaAndSessionTest.kt)):** **5 de 5 pruebas aprobadas** (`skipped="0"`, `failures="0"`, `errors="0"`).
+- **Suite Unitaria ([MediaAndSessionTest.kt](../app/src/test/java/com/example/redsocialnfc/MediaAndSessionTest.kt)):** **7 de 7 pruebas aprobadas** (`skipped="0"`, `failures="0"`, `errors="0"`), incluyendo validación de comandos APDU ISO 7816-4 y serialización JSON NFC.
 - **Verificación en Emulador (`emulator-5554`):** Migración verificada a `PRAGMA user_version = 9` conservando usuario y publicaciones previas.
+
+---
+
+## 6. Preguntas del Asesor a los Alumnos (Defensa Técnica)
+
+A continuación se documentan **3 preguntas clave** que el docente/asesor puede realizar durante la exposición, junto con la respuesta técnica respaldada directamente por el código y la base de datos:
+
+### Pregunta 1: *¿Por qué utilizaron Room SQLite local con migraciones en lugar de Firebase o un servidor REST tradicional, y cómo garantizan que no se pierdan los datos al actualizar la app?*
+**Respuesta:**  
+**Local** (`RedSocialNFC`) está diseñada bajo un enfoque **offline-first** para entornos presenciales (campus, aulas o eventos sin dependencia obligatoria de internet o servidores externos). Usar **Room SQLite (`version = 9`)** permite consultas reactivas en tiempo real mediante `Flow` y verificación de sintaxis SQL en tiempo de compilación con **KSP**.  
+Para evitar la pérdida de datos al evolucionar el esquema (al agregar categorías, comentarios, audiencias y mensajes multimedia), implementamos **migraciones explícitas no destructivas** (`MIGRATION_6_7`, `MIGRATION_7_8`, `MIGRATION_8_9` en `AppDatabase.kt`) con sentencias `ALTER TABLE` y `CREATE TABLE IF NOT EXISTS`, garantizando integridad ACID sin borrar usuarios ni publicaciones previas.
+
+### Pregunta 2: *¿Cómo implementaron el intercambio de contactos por NFC y qué pasa si el dispositivo o emulador no tiene chip NFC o usa Android moderno?*
+**Respuesta:**  
+En lugar de usar *Android Beam* (obsoleto desde Android 10 y eliminado en Android 14), implementamos el estándar moderno **HCE (Host-based Card Emulation)** con protocolo **ISO 7816-4**:
+1. El teléfono emisor ejecuta `NfcHandshakeService` (subclase de `HostApduService`) registrado en `AndroidManifest.xml` con el descriptor `apduservice.xml` y el AID propietario `F0010203040506`.
+2. El teléfono receptor activa `NfcAdapter.enableReaderMode` desde `NfcHelper.kt`, envía el comando `SELECT AID` vía `IsoDep` (con respaldo para etiquetas físicas `Ndef`), recibe el JSON de identidad firmado con Status Word `90 00`, vibra y guarda automáticamente al contacto en la tabla `amigos` de Room.
+3. Declaramos `android.hardware.nfc` con `required="false"` e incluimos una pestaña de **Simulación / Manual** dentro de `DialogNfcHandshake.kt` que ejecuta exactamente el mismo serializador/deserializador `NfcProtocol`, permitiendo demostrar la funcionalidad tanto en dos teléfonos reales como en el emulador.
+
+### Pregunta 3: *¿Cómo controlan la privacidad de la identidad dual y quién puede ver las publicaciones sin afectar el rendimiento?*
+**Respuesta:**  
+Cada usuario posee una identidad pública (`realHandle`, editable en perfil) y un pseudónimo fijo autogenerado (`@Anonimo_XXY`), además de contraseñas almacenadas únicamente como hash criptográfico **`SHA-256`** (`SessionManager.hashPassword`).  
+Al crear una publicación o categoría, el usuario selecciona la audiencia (`TODOS`, `AMIGOS`, `SELECCIONADOS`, `PRIVADO`). El muro (`FeedScreen.kt`) evalúa reactivamente en memoria con `remember` la lista de amigos vinculados en SQLite (`AmigoDao`) y los `audienciaPermitidos`, mostrando únicamente lo autorizado sin bloquear el hilo principal (E/S en `Dispatchers.IO`).
