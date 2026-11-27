@@ -101,6 +101,7 @@ import com.example.redsocialnfc.data.MediaTipoChat
 import com.example.redsocialnfc.data.Mensaje
 import com.example.redsocialnfc.domain.AppDatabase
 import com.example.redsocialnfc.presentation.components.AudioBubblePlayer
+import com.example.redsocialnfc.presentation.components.DialogNfcHandshake
 import com.example.redsocialnfc.presentation.components.DocumentoAttachmentCard
 import com.example.redsocialnfc.presentation.components.FotoPreviewCard
 import com.example.redsocialnfc.presentation.components.ReproductorVideoDialog
@@ -349,9 +350,9 @@ fun ChatScreen(
                                 colors = ButtonDefaults.buttonColors(containerColor = MutedPurple),
                                 shape = RoundedCornerShape(24.dp)
                             ) {
-                                Icon(Icons.Default.PersonAdd, contentDescription = null, modifier = Modifier.size(18.dp))
+                                Icon(Icons.Default.Nfc, contentDescription = null, modifier = Modifier.size(18.dp))
                                 Spacer(Modifier.width(8.dp))
-                                Text("Agregar contacto", color = Color.White, fontWeight = FontWeight.Bold)
+                                Text("Vincular amigo por NFC", color = Color.White, fontWeight = FontWeight.Bold)
                             }
                         }
                     }
@@ -438,26 +439,13 @@ fun ChatScreen(
     }
 
     if (mostrarDialogoAgregarContacto) {
-        AgregarContactoDialog(
+        DialogNfcHandshake(
+            sessionManager = sessionManager,
             onDismiss = { mostrarDialogoAgregarContacto = false },
-            onAgregar = { nombre, handleSinArroba ->
-                val handleLimpio = "@${handleSinArroba.trim().removePrefix("@")}"
-                scope.launch {
-                    val yaExiste = amigoDao.obtenerPorHandle(handleLimpio)
-                    if (yaExiste != null) {
-                        Toast.makeText(context, "$handleLimpio ya está en tu lista de contactos", Toast.LENGTH_SHORT).show()
-                        return@launch
-                    }
-                    amigoDao.insertar(
-                        Amigo(
-                            handle = handleLimpio,
-                            nombre = nombre.trim(),
-                            nfcUuid = UUID.randomUUID().toString()
-                        )
-                    )
-                    avisoNuevoAmigo = "Contacto $handleLimpio agregado correctamente."
-                    mostrarDialogoAgregarContacto = false
-                }
+            onAmigoVinculado = { nuevoAmigo ->
+                avisoNuevoAmigo = "¡Amigo vinculado por NFC: ${nuevoAmigo.handle}!"
+                amigoSeleccionado = nuevoAmigo
+                mostrarDialogoAgregarContacto = false
             }
         )
     }

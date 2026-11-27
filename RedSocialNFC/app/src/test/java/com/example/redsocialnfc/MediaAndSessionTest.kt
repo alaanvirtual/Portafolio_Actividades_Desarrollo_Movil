@@ -1,6 +1,7 @@
 package com.example.redsocialnfc
 
 import com.example.redsocialnfc.data.VisibilidadMuro
+import com.example.redsocialnfc.nfc.NfcProtocol
 import com.example.redsocialnfc.util.MediaStorageHelper
 import com.example.redsocialnfc.util.PollHelper
 import com.example.redsocialnfc.util.SessionManager
@@ -82,5 +83,47 @@ class MediaAndSessionTest {
         assertTrue(resumenSeleccion.isNotBlank())
         assertTrue(resumenPrivado.isNotBlank())
         assertEquals(4, setOf(resumenTodos, resumenAmigos, resumenSeleccion, resumenPrivado).size)
+    }
+
+    @Test
+    fun nfcProtocoloHexYApduFuncionanCorrectamente() {
+        val hex = "F0010203040506"
+        val bytes = NfcProtocol.hexToBytes(hex)
+        assertEquals(7, bytes.size)
+        assertEquals(hex.uppercase(), NfcProtocol.bytesToHex(bytes))
+
+        val selectApdu = NfcProtocol.buildSelectApdu(NfcProtocol.AID_HEX)
+        assertTrue(NfcProtocol.isSelectAidCommand(selectApdu, NfcProtocol.AID_HEX))
+
+        // Comando con AID incorrecto
+        val apduInvalido = NfcProtocol.buildSelectApdu("F0999999999999")
+        assertFalse(NfcProtocol.isSelectAidCommand(apduInvalido, NfcProtocol.AID_HEX))
+        assertFalse(NfcProtocol.isSelectAidCommand(byteArrayOf(0x00, 0xA4.toByte())))
+        assertFalse(NfcProtocol.isSelectAidCommand(null))
+    }
+
+    @Test
+    fun nfcPayloadJsonSerializacionYParseoFuncionan() {
+        val json = NfcProtocol.crearPayloadJson(
+            handle = "@Carlos_Dev",
+            nombre = "Carlos Mendoza",
+            nfcUuid = "uuid-test-nfc-12345",
+            avatarUri = null
+        )
+        assertNotNull(json)
+        assertTrue(json.contains("@Carlos_Dev"))
+        assertTrue(json.contains("RedSocialNFC"))
+
+        val contacto = NfcProtocol.parsearPayloadJson(json)
+        assertNotNull(contacto)
+        assertEquals("@Carlos_Dev", contacto!!.handle)
+        assertEquals("Carlos Mendoza", contacto.nombre)
+        assertEquals("uuid-test-nfc-12345", contacto.nfcUuid)
+        assertNull(contacto.avatarUri)
+        assertTrue(contacto.timestamp > 0)
+
+        // Parseo con json inválido
+        assertNull(NfcProtocol.parsearPayloadJson("invalido"))
+        assertNull(NfcProtocol.parsearPayloadJson("{}"))
     }
 }

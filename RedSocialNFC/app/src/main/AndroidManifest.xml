@@ -3,6 +3,7 @@
 
     <!-- Permiso y característica de hardware para NFC -->
     <uses-permission android:name="android.permission.NFC" />
+    <uses-permission android:name="android.permission.VIBRATE" />
     <!-- Permiso opcional para grabar notas de voz en el chat -->
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <!-- Permiso y característica opcional para tomar fotografías con la cámara -->
@@ -36,6 +37,19 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!-- Servicio de Emulación de Tarjeta NFC (HCE - Host Card Emulation) -->
+        <service
+            android:name=".nfc.NfcHandshakeService"
+            android:exported="true"
+            android:permission="android.permission.BIND_NFC_SERVICE">
+            <intent-filter>
+                <action android:name="android.nfc.cardemulation.action.HOST_APDU_SERVICE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.nfc.cardemulation.host_apdu_service"
+                android:resource="@xml/apduservice" />
+        </service>
 
         <provider
             android:name="androidx.core.content.FileProvider"

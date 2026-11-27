@@ -86,6 +86,7 @@ import com.example.redsocialnfc.data.Comentario
 import com.example.redsocialnfc.data.Publicacion
 import com.example.redsocialnfc.domain.AppDatabase
 import com.example.redsocialnfc.presentation.components.AvatarUsuario
+import com.example.redsocialnfc.presentation.components.DialogNfcHandshake
 import com.example.redsocialnfc.presentation.components.ReproductorVideoDialog
 import com.example.redsocialnfc.presentation.components.VisorImagenDialog
 import com.example.redsocialnfc.presentation.components.rememberCameraPhotoLauncher
@@ -136,6 +137,7 @@ fun PerfilScreen(
 
     var mostrarEditarPerfil by remember { mutableStateOf(false) }
     var mostrarOpcionesAvatar by remember { mutableStateOf(false) }
+    var mostrarDialogoNfc by remember { mutableStateOf(false) }
     var perfilTabIndex by remember { mutableIntStateOf(0) }
     var postParaComentarPerfil by remember { mutableStateOf<Publicacion?>(null) }
     var postParaBorrarPerfil by remember { mutableStateOf<Publicacion?>(null) }
@@ -574,6 +576,17 @@ fun PerfilScreen(
                             style = MaterialTheme.typography.bodySmall,
                             color = TextSecondary
                         )
+                        Spacer(Modifier.height(10.dp))
+                        Button(
+                            onClick = { mostrarDialogoNfc = true },
+                            colors = ButtonDefaults.buttonColors(containerColor = MutedPurple),
+                            shape = RoundedCornerShape(10.dp),
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Icon(Icons.Default.Nfc, contentDescription = null, modifier = Modifier.size(18.dp))
+                            Spacer(Modifier.width(8.dp))
+                            Text("Vincular nuevo amigo con NFC", fontWeight = FontWeight.SemiBold, color = Color.White)
+                        }
                     }
                 }
                 } else {
@@ -820,6 +833,17 @@ fun PerfilScreen(
                     mostrarEditarPerfil = false
                     Toast.makeText(context, "Perfil actualizado", Toast.LENGTH_SHORT).show()
                 }
+            }
+        )
+    }
+
+    if (mostrarDialogoNfc) {
+        DialogNfcHandshake(
+            sessionManager = sessionManager,
+            onDismiss = { mostrarDialogoNfc = false },
+            onAmigoVinculado = { amigo ->
+                Toast.makeText(context, "¡Vinculado con ${amigo.handle}!", Toast.LENGTH_SHORT).show()
+                mostrarDialogoNfc = false
             }
         )
     }

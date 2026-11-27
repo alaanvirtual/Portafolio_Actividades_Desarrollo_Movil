@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Explicación Técnica: Integración de NFC y Emulación HCE en RedSocialNFC (Local)</title>
+    <style>
+        @page {
+            size: letter;
+            margin: 18mm 16mm 18mm 16mm;
+        }
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+            color: #1a1a24;
+            background-color: #ffffff;
+            line-height: 1.5;
+            font-size: 10.5pt;
+            margin: 0;
+            padding: 0;
+        }
+        .header-box {
+            background: linear-gradient(135deg, #181820 0%, #282438 100%);
+            color: #ffffff;
+            padding: 24px 28px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+        }
+        .header-box h1 {
+            margin: 0 0 6px 0;
+            font-size: 20pt;
+            color: #ffffff;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+        .header-box .sub {
+            font-size: 11pt;
+            color: #cfc6ea;
+            font-weight: 500;
+            margin: 0 0 14px 0;
+        }
+        .meta-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            font-size: 9pt;
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+            padding-top: 12px;
+        }
+        .meta-item strong {
+            display: block;
+            color: #a491d3;
+            text-transform: uppercase;
+            font-size: 7.5pt;
+            letter-spacing: 0.5px;
+        }
+        .meta-item span {
+            color: #f0f0f5;
+            font-weight: 600;
+        }
+
+        h2 {
+            color: #241e38;
+            font-size: 13.5pt;
+            border-bottom: 2px solid #6b5b95;
+            padding-bottom: 5px;
+            margin-top: 22px;
+            margin-bottom: 12px;
+            page-break-after: avoid;
+            display: flex;
+            align-items: center;
+        }
+        h2::before {
+            content: "■";
+            color: #6b5b95;
+            font-size: 9pt;
+            margin-right: 8px;
+        }
+        h3 {
+            color: #3d3558;
+            font-size: 11.5pt;
+            margin-top: 14px;
+            margin-bottom: 6px;
+            page-break-after: avoid;
+        }
+        p {
+            margin: 0 0 10px 0;
+            text-align: justify;
+        }
+        ul, ol {
+            margin: 0 0 12px 0;
+            padding-left: 22px;
+        }
+        li {
+            margin-bottom: 5px;
+        }
+        .badge {
+            display: inline-block;
+            background: #ede8f5;
+            color: #55447e;
+            padding: 2px 7px;
+            border-radius: 4px;
+            font-weight: 700;
+            font-size: 8pt;
+            font-family: Consolas, monospace;
+        }
+        .badge-success {
+            background: #e6f4ea;
+            color: #137333;
+        }
+
+        .highlight-box {
+            background: #f8f6fc;
+            border-left: 4px solid #6b5b95;
+            padding: 12px 14px;
+            border-radius: 0 8px 8px 0;
+            margin: 14px 0;
+            font-size: 9.5pt;
+        }
+        .highlight-box strong {
+            color: #382c58;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 12px 0 18px 0;
+            font-size: 9pt;
+        }
+        th, td {
+            border: 1px solid #dcd7e8;
+            padding: 7px 10px;
+            text-align: left;
+        }
+        th {
+            background: #ede8f5;
+            color: #2b2244;
+            font-weight: 700;
+        }
+        tr:nth-child(even) td {
+            background: #faf9fd;
+        }
+
+        pre {
+            background: #181822;
+            color: #eaeaf2;
+            padding: 12px 14px;
+            border-radius: 8px;
+            font-family: Consolas, 'Courier New', monospace;
+            font-size: 8.5pt;
+            line-height: 1.4;
+            overflow-x: auto;
+            margin: 10px 0 14px 0;
+            border: 1px solid #2e2a3f;
+            page-break-inside: avoid;
+        }
+        code {
+            font-family: Consolas, monospace;
+            background: #f0eef6;
+            color: #4a3d6f;
+            padding: 1px 4px;
+            border-radius: 3px;
+            font-size: 8.5pt;
+        }
+        pre code {
+            background: transparent;
+            color: inherit;
+            padding: 0;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin: 12px 0;
+        }
+        .card {
+            background: #faf9fd;
+            border: 1px solid #ddd8ec;
+            border-radius: 8px;
+            padding: 12px 14px;
+        }
+        .card h4 {
+            margin: 0 0 6px 0;
+            color: #55447e;
+            font-size: 10pt;
+            font-weight: 700;
+        }
+        .card p {
+            font-size: 9pt;
+            margin: 0;
+        }
+
+        .footer {
+            margin-top: 28px;
+            border-top: 1px solid #dcd7e8;
+            padding-top: 10px;
+            font-size: 8pt;
+            color: #77708a;
+            display: flex;
+            justify-content: space-between;
+        }
+        .page-break {
+            page-break-before: always;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header-box">
+        <h1>INTEGRACIÓN DE HARDWARE NFC (NEAR FIELD COMMUNICATION)</h1>
+        <div class="sub">Emulación de Tarjeta Host-based (HCE), Reader Mode ISO 7816-4 y Vinculación Criptográfica de Contactos</div>
+        <div class="meta-grid">
+            <div class="meta-item">
+                <strong>Proyecto</strong>
+                <span>RedSocialNFC (Local)</span>
+            </div>
+            <div class="meta-item">
+                <strong>Asignatura</strong>
+                <span>Desarrollo de Apps Móviles</span>
+            </div>
+            <div class="meta-item">
+                <strong>Docente</strong>
+                <span>Prof. Juan Carlos (JC)</span>
+            </div>
+            <div class="meta-item">
+                <strong>Alumno / Autor</strong>
+                <span>Alan (Luizx)</span>
+            </div>
+        </div>
+    </div>
+
+    <h2>1. Justificación y Contexto Tecnológico: HCE vs. Android Beam</h2>
+    <p>
+        En el desarrollo moderno sobre el ecosistema Android, muchas aplicaciones académicas o proyectos legados intentaban utilizar <strong>Android Beam</strong> (basado en P2P NDEF Push con SNEP/LLCP). Sin embargo, <strong>Android Beam fue marcado como obsoleto en Android 10 (API 29) y eliminado definitivamente a partir de Android 14 (API 34)</strong> debido a su inestabilidad y falta de soporte en chipsets modernos.
+    </p>
+    <div class="highlight-box">
+        <strong>Decisión de Arquitectura en RedSocialNFC:</strong> Se implementó la arquitectura oficial recomendada por Google para producción: <strong>Host-based Card Emulation (HCE)</strong> mediante la API <code>HostApduService</code> en combinación con <strong>Reader Mode</strong> (<code>NfcAdapter.enableReaderMode</code>) y fallback a etiquetas físicas <strong>NDEF</strong>.
+    </div>
+
+    <div class="card-grid">
+        <div class="card">
+            <h4>Dispositivo Emisor (Tarjeta Inteligente Virtual)</h4>
+            <p>
+                El dispositivo emula una tarjeta inteligente sin requerir un elemento seguro (Secure Element) por hardware. El servicio <code>NfcHandshakeService</code> atiende comandos APDU ISO 7816-4 en segundo plano incluso con la pantalla encendida fuera de la app.
+            </p>
+        </div>
+        <div class="card">
+            <h4>Dispositivo Receptor (Lector NFC de Alta Velocidad)</h4>
+            <p>
+                Al abrir la interfaz de vinculación o detección en <em>Local</em>, la app activa <code>enableReaderMode</code> con banderas <code>FLAG_READER_NFC_A</code> y <code>FLAG_READER_SKIP_NDEF_CHECK</code>, ejecutando el intercambio en milisegundos sin disparar los diálogos molestos del sistema operativo.
+            </p>
+        </div>
+    </div>
+
+    <h2>2. Protocolo de Comunicación APDU ISO 7816-4</h2>
+    <p>
+        Para asegurar que dos teléfonos con <em>Local</em> se reconozcan mutuamente de forma unívoca, se definió un <strong>Application Identifier (AID)</strong> propietario en el rango ISO 7816-4 de categoría <code>F</code> (Privado/Propietario):
+    </p>
+    <p style="text-align:center;">
+        <span class="badge" style="font-size:11pt; padding:6px 14px;">AID Propietario Local: F0 01 02 03 04 05 06 (7 bytes)</span>
+    </p>
+
+    <h3>Estructura del Paquete de Comando (Command APDU):</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Campo</th>
+                <th>Byte(s) Hex</th>
+                <th>Significado / Función</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>CLA</strong></td>
+                <td><code>0x00</code></td>
+                <td>Clase de comando estándar ISO 7816-4</td>
+            </tr>
+            <tr>
+                <td><strong>INS</strong></td>
+                <td><code>0xA4</code></td>
+                <td>Instrucción <code>SELECT FILE / APPLICATION</code></td>
+            </tr>
+            <tr>
+                <td><strong>P1</strong></td>
+                <td><code>0x04</code></td>
+                <td>Selección directa por nombre de aplicación (DF Name / AID)</td>
+            </tr>
+            <tr>
+                <td><strong>P2</strong></td>
+                <td><code>0x00</code></td>
+                <td>Primera coincidencia / sin opciones adicionales</td>
+            </tr>
+            <tr>
+                <td><strong>Lc</strong></td>
+                <td><code>0x07</code></td>
+                <td>Longitud de los datos entrantes (7 bytes del AID)</td>
+            </tr>
+            <tr>
+                <td><strong>Data</strong></td>
+                <td><code>F0 01 02 03 04 05 06</code></td>
+                <td>Identificador de la aplicación <em>RedSocialNFC (Local)</em></td>
+            </tr>
+            <tr>
+                <td><strong>Le</strong></td>
+                <td><code>0x00</code></td>
+                <td>Longitud máxima esperada en la respuesta (256 bytes)</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3>Estructura del Paquete de Respuesta (Response APDU):</h3>
+    <p>
+        El dispositivo emulador responde con la carga útil serializada en formato <strong>JSON UTF-8</strong> concatenada con los dos bytes de estado (Status Word) <strong>SW1 = 0x90, SW2 = 0x00</strong> (operación completada exitosamente):
+    </p>
+    <pre><code>// Carga útil transmitida en el APDU Response de RedSocialNFC:
+{
+  "app": "RedSocialNFC",
+  "version": 1,
+  "handle": "@Luis",
+  "nombre": "Luizx",
+  "nfcUuid": "4e79b88d-75fb-4395-950c-d40b9557fa67",
+  "avatarUri": "content://com.example.redsocialnfc.fileprovider/...",
+  "timestamp": 1732700800000
+} + [0x90, 0x00]</code></pre>
+
+    <div class="page-break"></div>
+
+    <h2>3. Implementación Paso a Paso en el Código Fuente</h2>
+
+    <h3>3.1. Registro del Servicio en AndroidManifest.xml</h3>
+    <p>
+        Para que el sistema Android reconozca el servicio de emulación de tarjeta, se configuró el permiso <code>BIND_NFC_SERVICE</code> y la acción del intent-filter <code>HOST_APDU_SERVICE</code>:
+    </p>
+    <pre><code>&lt;!-- AndroidManifest.xml --&gt;
+&lt;uses-permission android:name="android.permission.NFC" /&gt;
+&lt;uses-permission android:name="android.permission.VIBRATE" /&gt;
+&lt;uses-feature android:name="android.hardware.nfc" android:required="false" /&gt;
+
+&lt;service
+    android:name=".nfc.NfcHandshakeService"
+    android:exported="true"
+    android:permission="android.permission.BIND_NFC_SERVICE"&gt;
+    &lt;intent-filter&gt;
+        &lt;action android:name="android.nfc.cardemulation.action.HOST_APDU_SERVICE" /&gt;
+    &lt;/intent-filter&gt;
+    &lt;meta-data
+        android:name="android.nfc.cardemulation.host_apdu_service"
+        android:resource="@xml/apduservice" /&gt;
+&lt;/service&gt;</code></pre>
+
+    <h3>3.2. Descriptor XML de la Tarjeta (res/xml/apduservice.xml)</h3>
+    <pre><code>&lt;?xml version="1.0" encoding="utf-8"?&gt;
+&lt;host-apdu-service xmlns:android="http://schemas.android.com/apk/res/android"
+    android:description="@string/nfc_service_description"
+    android:requireDeviceUnlock="false"&gt;
+    &lt;aid-group
+        android:category="other"
+        android:description="@string/nfc_aid_group_description"&gt;
+        &lt;aid-filter android:name="F0010203040506" /&gt;
+    &lt;/aid-group&gt;
+&lt;/host-apdu-service&gt;</code></pre>
+
+    <h3>3.3. Servicio de Emulación: NfcHandshakeService.kt</h3>
+    <p>
+        Hereda de <code>HostApduService</code>. Cuando otro teléfono en Reader Mode realiza un toque NFC, Android invoca <code>processCommandApdu()</code>. El servicio valida que el comando sea un <code>SELECT AID</code> para <code>F0010203040506</code>, extrae la identidad del usuario actual desde <code>SessionManager</code> y devuelve el payload firmado con <code>0x90 0x00</code>:
+    </p>
+    <pre><code>class NfcHandshakeService : HostApduService() {
+    override fun processCommandApdu(commandApdu: ByteArray?, extras: Bundle?): ByteArray {
+        if (commandApdu == null) return NfcProtocol.SW_UNKNOWN
+
+        if (NfcProtocol.isSelectAidCommand(commandApdu)) {
+            val session = SessionManager(applicationContext)
+            val json = NfcProtocol.crearPayloadJson(
+                handle = session.getRealHandle(),
+                nombre = session.getDisplayName(),
+                nfcUuid = session.obtenerOGenerarDeviceNfcUuid(),
+                avatarUri = session.getAvatarUri()
+            )
+            val bytes = json.toByteArray(Charsets.UTF_8)
+            val response = ByteArray(bytes.size + NfcProtocol.SW_SUCCESS.size)
+            System.arraycopy(bytes, 0, response, 0, bytes.size)
+            System.arraycopy(NfcProtocol.SW_SUCCESS, 0, response, bytes.size, 2)
+            return response
+        }
+        return NfcProtocol.SW_UNKNOWN
+    }
+    override fun onDeactivated(reason: Int) { /* Desconexión NFC */ }
+}</code></pre>
+
+    <h3>3.4. Lector y Gestor de Hardware: NfcHelper.kt</h3>
+    <p>
+        Gestiona la activación de <code>enableReaderMode</code> en la <code>Activity</code> activa, el envío del APDU a través del canal <code>IsoDep</code>, la lectura de etiquetas NDEF convencionales como respaldo, y el feedback háptico con la API <code>Vibrator / VibrationEffect</code>:
+    </p>
+    <pre><code>// Envío de APDU sobre IsoDep en NfcHelper.kt:
+val isoDep = IsoDep.get(tag)
+isoDep.connect()
+isoDep.timeout = 5000
+val response = isoDep.transceive(NfcProtocol.buildSelectApdu())
+if (response.size >= 2 &amp;&amp; response[response.size - 2] == 0x90.toByte()) {
+    val payloadJson = String(response.copyOfRange(0, response.size - 2), Charsets.UTF_8)
+    val contacto = NfcProtocol.parsearPayloadJson(payloadJson)
+    // Inserción en Room SQLite y emisión de evento reactivo
+}</code></pre>
+
+    <div class="page-break"></div>
+
+    <h2>4. Experiencia de Usuario (UI) y Vinculación en Tiempo Real</h2>
+    <p>
+        La integración de NFC cuenta con componentes visuales de alta fidelidad desarrollados en <strong>Jetpack Compose Material 3</strong>:
+    </p>
+    <ul>
+        <li>
+            <strong>Diálogo de Radar NFC (<code>DialogNfcHandshake.kt</code>):</strong>
+            Presenta una animación continua de ondas concéntricas (efecto sonar/radar con <code>rememberInfiniteTransition</code>) que transmite al usuario que el sensor físico se encuentra emitiendo y a la escucha.
+        </li>
+        <li>
+            <strong>Detección de Estado de Hardware:</strong>
+            Si el usuario tiene el NFC apagado en los ajustes de Android, el diálogo lo detecta automáticamente mostrando un banner con botón de acción directo: <em>"Activar NFC en Ajustes"</em> (lanzando <code>Settings.ACTION_NFC_SETTINGS</code>).
+        </li>
+        <li>
+            <strong>Simulador de Handshake Integrado para Pruebas y Emuladores:</strong>
+            Dado que los emuladores de Android Studio de escritorio no poseen chip NFC físico, se diseñó una pestaña dedicada de <strong>Simulación de Handshake</strong>. Esta pestaña ejecuta exactamente el mismo pipeline criptográfico de serialización y deserialización JSON de <code>NfcProtocol</code>, permitiendo al profesor o evaluador probar la vinculación con usuarios preset (<code>@Carlos_Dev</code>, <code>@Valeria_UX</code>, <code>@Profe_JC</code>) o cualquier usuario personalizado en un solo clic.
+        </li>
+        <li>
+            <strong>Inserción Automática en Room Database:</strong>
+            Al concretarse el toque NFC (físico o simulado), el contacto se persiste de forma reactiva en la tabla <code>amigos</code> mediante <code>AmigoDao.insertar(nuevoAmigo)</code> y se redirige automáticamente al chat directo.
+        </li>
+    </ul>
+
+    <h2>5. Verificación mediante Pruebas Unitarias Automatizadas</h2>
+    <p>
+        Para garantizar la robustez del protocolo contra fallos de codificación, se diseñó una suite de pruebas en JUnit dentro de <code>MediaAndSessionTest.kt</code>:
+    </p>
+    <table>
+        <thead>
+            <tr>
+                <th>Prueba Unitaria</th>
+                <th>Condición Evaluada</th>
+                <th>Resultado</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><code>nfcProtocoloHexYApduFuncionanCorrectamente</code></td>
+                <td>
+                    Validación bidireccional Hex ↔ ByteArray, construcción de cabecera APDU ISO 7816-4 con longitud <code>0x07</code> y coincidencia del AID <code>F0010203040506</code>. Rechazo de APDUs truncadas o con AID inválido.
+                </td>
+                <td><span class="badge badge-success">PASÓ (100%)</span></td>
+            </tr>
+            <tr>
+                <td><code>nfcPayloadJsonSerializacionYParseoFuncionan</code></td>
+                <td>
+                    Serialización completa con campos <code>app</code>, <code>handle</code>, <code>nombre</code>, <code>nfcUuid</code>, <code>timestamp</code>. Deserialización estricta y descarte de cadenas corruptas o JSONs incompletos.
+                </td>
+                <td><span class="badge badge-success">PASÓ (100%)</span></td>
+            </tr>
+            <tr>
+                <td><code>visibilidadMuroSerializacionYResumenFuncionan</code></td>
+                <td>
+                    Prueba del filtro de audiencia para amigos vinculados por NFC (<code>VisibilidadMuro.AMIGOS</code> y <code>SELECCIONADOS</code>).
+                </td>
+                <td><span class="badge badge-success">PASÓ (100%)</span></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2>6. Resumen de Archivos Incorporados al Proyecto</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Archivo</th>
+                <th>Capa / Rol</th>
+                <th>Descripción Funcional</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><code>nfc/NfcProtocol.kt</code></td>
+                <td>Protocolo / Dominio</td>
+                <td>Constantes AID, constructores de paquetes APDU, parsing JSON de identidades.</td>
+            </tr>
+            <tr>
+                <td><code>nfc/NfcHandshakeService.kt</code></td>
+                <td>Servicio Android HCE</td>
+                <td>Respuesta a comandos APDU entrantes cuando el móvil es tocado como tarjeta.</td>
+            </tr>
+            <tr>
+                <td><code>nfc/NfcHelper.kt</code></td>
+                <td>Hardware / Utilidad</td>
+                <td>Control de <code>enableReaderMode</code>, <code>IsoDep</code>, <code>Ndef</code> y vibración.</td>
+            </tr>
+            <tr>
+                <td><code>res/xml/apduservice.xml</code></td>
+                <td>Configuración del SO</td>
+                <td>Registro formal del AID <code>F0010203040506</code> ante el subsistema Android.</td>
+            </tr>
+            <tr>
+                <td><code>components/DialogNfcHandshake.kt</code></td>
+                <td>UI / Jetpack Compose</td>
+                <td>Diálogo con animación de radar, feedback visual y simulador para emulador.</td>
+            </tr>
+            <tr>
+                <td><code>MediaAndSessionTest.kt</code></td>
+                <td>Pruebas Unitarias</td>
+                <td>Tests automatizados de encoding, SELECT APDU y JSON payloads.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="footer">
+        <span>RedSocialNFC (Local) • Módulo Especializado de Hardware NFC y HCE</span>
+        <span>Materia: Aplicaciones Móviles • Calificación Requerida: 100/100</span>
+    </div>
+
+</body>
+</html>

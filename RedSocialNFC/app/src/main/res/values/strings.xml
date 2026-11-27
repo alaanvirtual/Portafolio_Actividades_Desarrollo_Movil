@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Local</string>
+    <string name="nfc_service_description">Servicio de Intercambio de Contacto NFC para Local</string>
+    <string name="nfc_aid_group_description">Identidad Digital de Usuario Local por NFC</string>
 </resources>
